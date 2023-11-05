@@ -2,6 +2,7 @@
 from flask import *
 import sqlite3 
 import bcrypt
+from adafruit_motorkit import Motorkit
 
  #creates flask app
 app = Flask(__name__)
@@ -21,15 +22,6 @@ def index():
         return render_template('index.html',firstname=session['username'])
     return render_template('login.html')
 
-# @app.route('/hello')
-# def hello():
-#     return 'Hello, World'
-
-# @app.route('/echo/<parameter>')
-# def echo_parameter(parameter):
-#     return jsonify({'parameter': parameter})
-
-#creates login page
 @app.route('/login',methods=['GET', 'POST'])
 def login( ):
     #gets user
@@ -79,3 +71,54 @@ def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('login'))
+
+@app.route('/right')
+def right():
+    if 'username' in session:
+        # Right turn
+        kit.motor1.throttle = -0.72
+        kit.Motor2.throttle = -0.75
+        time.sleep(0.79)
+
+        return jsonify("right")
+    else:
+       return jsonify("not logged in")
+@app.route('/forward')
+def forward():
+    if 'username' in session:
+        # Forward at full speed
+        kit.motor1.throttle = 0.7
+        kit.motor2.throttle = 0.7
+        #Run both motors for 3.5 seconds
+        time.sleep(3.5)
+
+        return jsonify("forward")
+    else:
+       return jsonify("not logged in")
+@app.route('/backward')
+def backward():
+    if 'username' in session:
+        #Backward at full speed
+        kit.motor1.throttle = -0.7
+        kit.motor2.throttle = -0.7
+        # Run both motors for 3.5 seconds
+        time.sleep(3.5)
+        return jsonify("backward")
+    else:
+       return jsonify("not logged in")
+@app.route('/left')
+def left():
+    if 'username' in session:
+        #Left turn
+        kit.motor1.throttle = 0.75
+        kit.Motor2.throttle = -0.72
+        time.sleep(1.5)
+
+        return jsonify("left")
+    else:
+       return jsonify("not logged in")
+
+#Allows app to run
+if __name__ == '__main__':
+    app.run()
+    kit = Motorkit(0x40)
