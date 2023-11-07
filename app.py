@@ -2,6 +2,7 @@
 from flask import *
 import sqlite3 
 import bcrypt
+import time
 from adafruit_motorkit import Motorkit
 
  #creates flask app
