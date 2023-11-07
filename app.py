@@ -3,7 +3,7 @@ from flask import *
 import sqlite3 
 import bcrypt
 import time
-from adafruit_motorkit import Motorkit
+# from adafruit_motorkit import Motorkit
 
  #creates flask app
 app = Flask(__name__)
@@ -76,10 +76,10 @@ def logout():
 @app.route('/right')
 def right():
     if 'username' in session:
-        # Right turn
-        kit.motor1.throttle = -0.72
-        kit.Motor2.throttle = 0.72
-        time.sleep(0.79)
+        # # Right turn
+        # kit.motor1.throttle = -0.72
+        # kit.Motor2.throttle = 0.72
+        # time.sleep(0.79)
 
         return jsonify("right")
     else:
@@ -87,11 +87,11 @@ def right():
 @app.route('/forward')
 def forward():
     if 'username' in session:
-        # Forward at full speed
-        kit.motor1.throttle = 0.732
-        kit.motor2.throttle = 0.7
-        #Run both motors for 3.5 seconds
-        time.sleep(3.5)
+        # # Forward at full speed
+        # kit.motor1.throttle = 0.732
+        # kit.motor2.throttle = 0.7
+        # #Run both motors for 3.5 seconds
+        # time.sleep(3.5)
 
         return jsonify("forward")
     else:
@@ -99,21 +99,21 @@ def forward():
 @app.route('/backward')
 def backward():
     if 'username' in session:
-        #Backward at full speed
-        kit.motor1.throttle = -0.81
-        kit.motor2.throttle = -0.7
-        # Run both motors for 3.5 seconds
-        time.sleep(3.5)
+        # #Backward at full speed
+        # kit.motor1.throttle = -0.81
+        # kit.motor2.throttle = -0.7
+        # # Run both motors for 3.5 seconds
+        # time.sleep(3.5)
         return jsonify("backward")
     else:
        return jsonify("not logged in")
 @app.route('/left')
 def left():
-    if 'username' in session:
-        #Left turn
-        kit.motor1.throttle = -0.72
-        kit.Motor2.throttle = 0.75
-        time.sleep(1.5)
+    # if 'username' in session:
+    #     #Left turn
+    #     kit.motor1.throttle = -0.72
+    #     kit.Motor2.throttle = 0.75
+    #     time.sleep(1.5)
 
         return jsonify("left")
     else:
