@@ -5,10 +5,10 @@ import time
 kit = MotorKit(0x40)
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 
 
-@app.route('/control', methods=['POST'])
+@app.route('/control')
 def control():
     command = request.json['command']
     if command == 'forward':
