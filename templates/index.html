@@ -21,7 +21,6 @@
     $.ajax({
       url: $(this).attr("href"),
       type: "GET",
-      crossDomain:true,
       dataType: "json",
       success: function(data) {
         $("#result").html(data);
