@@ -76,26 +76,26 @@ def logout():
 @app.route('/right')
 def right():
     if 'username' in session:
-        # # Right turn
+          # Right turn
           kit = Motorkit(0x40)
           kit.motor1.throttle = -0.72
           kit.Motor2.throttle = 0.72
           time.sleep(0.79)
 
-        return jsonify("right")
+          return jsonify("right")
     else:
        return jsonify("not logged in")
 @app.route('/forward')
 def forward():
     if 'username' in session:
-        # # Forward at full speed
+          # Forward at full speed
           kit = Motorkit(0x40)
           kit.motor1.throttle = 0.732
           kit.motor2.throttle = 0.7
         # Run both motors for 3.5 seconds
           time.sleep(3.5)
 
-        return jsonify("forward")
+          return jsonify("forward")
     else:
        return jsonify("not logged in")
 @app.route('/backward')
@@ -107,7 +107,7 @@ def backward():
           kit.motor2.throttle = -0.7
           Run both motors for 3.5 seconds
           time.sleep(3.5)
-        return jsonify("backward")
+          return jsonify("backward")
     else:
        return jsonify("not logged in")
 @app.route('/left')
@@ -119,7 +119,7 @@ def left():
          kit.Motor2.throttle = 0.75
          time.sleep(1.5)
 
-        return jsonify("left")
+         return jsonify("left")
     else:
        return jsonify("not logged in")
 
