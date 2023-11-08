@@ -8,7 +8,7 @@ app = Flask(__name__)
 @app.route('/', methods = ['GET', 'POST'])
 
 
-@app.route('/control')
+@app.route('/control', methods = ['GET', 'POST'])
 def control():
     command = request.json['command']
     if command == 'forward':
