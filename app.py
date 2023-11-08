@@ -101,11 +101,11 @@ def forward():
 @app.route('/backward')
 def backward():
     if 'username' in session:
-        # #Backward at full speed
+          #Backward at full speed
           kit = Motorkit(0x40)
           kit.motor1.throttle = -0.81
           kit.motor2.throttle = -0.7
-          Run both motors for 3.5 seconds
+          #Run both motors for 3.5 seconds
           time.sleep(3.5)
           return jsonify("backward")
     else:
