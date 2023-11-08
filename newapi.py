@@ -26,37 +26,38 @@ def control():
 
     return jsonify({'status': 'success', 'message': 'Command executed'})
 
-def forward(amount_of_time_to_run):
-    kit.motor1.throttle = -0.6
-    kit.motor2.throttle = 0.64
-    time.sleep(amount_of_time_to_run)
-    kit.motor1.throttle = 0.0
-    kit.motor2.throttle = 0.0
-
-def backward(amount_of_time_to_run):
-    kit.motor1.throttle = 0.7
-    kit.motor2.throttle = -0.7
-    time.sleep(amount_of_time_to_run)
-    kit.motor1.throttle = 0.0
-    kit.motor2.throttle = 0.0
-
-def left(amount_of_time_to_run):
-    kit.motor1.throttle = -0.64
-    kit.motor2.throttle = -0.64
-    time.sleep(amount_of_time_to_run)
-    kit.motor1.throttle = 0.0
-    kit.motor2.throttle = 0.0
-
-def right(amount_of_time_to_run):
-    kit.motor1.throttle = 0.64
-    kit.motor2.throttle = 0.64
-    time.sleep(amount_of_time_to_run)
-    kit.motor1.throttle = 0.0
-    kit.motor2.throttle = 0.0
-
-def stop():
-    kit.motor1.throttle = 0.0
-    kit.motor2.throttle = 0.0
+    def forward(amount_of_time_to_run):
+        kit.motor1.throttle = -0.6
+        kit.motor2.throttle = 0.64
+        time.sleep(amount_of_time_to_run)
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
+    
+    def backward(amount_of_time_to_run):
+        kit.motor1.throttle = 0.7
+        kit.motor2.throttle = -0.7
+        time.sleep(amount_of_time_to_run)
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
+    
+    def left(amount_of_time_to_run):
+        kit.motor1.throttle = -0.64
+        kit.motor2.throttle = -0.64
+        time.sleep(amount_of_time_to_run)
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
+    
+    def right(amount_of_time_to_run):
+        kit.motor1.throttle = 0.64
+        kit.motor2.throttle = 0.64
+        time.sleep(amount_of_time_to_run)
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
+    
+    def stop():
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
 
 if __name__ == '__main__':
     app.run(host='192.168.1.15', port=4445)
+    control()
