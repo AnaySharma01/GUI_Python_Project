@@ -77,9 +77,10 @@ def logout():
 def right():
     if 'username' in session:
         # # Right turn
-        # kit.motor1.throttle = -0.72
-        # kit.Motor2.throttle = 0.72
-        # time.sleep(0.79)
+          kit = Motorkit(0x40)
+          kit.motor1.throttle = -0.72
+          kit.Motor2.throttle = 0.72
+          time.sleep(0.79)
 
         return jsonify("right")
     else:
@@ -88,10 +89,11 @@ def right():
 def forward():
     if 'username' in session:
         # # Forward at full speed
-        # kit.motor1.throttle = 0.732
-        # kit.motor2.throttle = 0.7
-        # #Run both motors for 3.5 seconds
-        # time.sleep(3.5)
+          kit = Motorkit(0x40)
+          kit.motor1.throttle = 0.732
+          kit.motor2.throttle = 0.7
+        # Run both motors for 3.5 seconds
+          time.sleep(3.5)
 
         return jsonify("forward")
     else:
@@ -100,20 +102,22 @@ def forward():
 def backward():
     if 'username' in session:
         # #Backward at full speed
-        # kit.motor1.throttle = -0.81
-        # kit.motor2.throttle = -0.7
-        # # Run both motors for 3.5 seconds
-        # time.sleep(3.5)
+          kit = Motorkit(0x40)
+          kit.motor1.throttle = -0.81
+          kit.motor2.throttle = -0.7
+          Run both motors for 3.5 seconds
+          time.sleep(3.5)
         return jsonify("backward")
     else:
        return jsonify("not logged in")
 @app.route('/left')
 def left():
     if 'username' in session:
-    #     #Left turn
-    #     kit.motor1.throttle = -0.72
-    #     kit.Motor2.throttle = 0.75
-    #     time.sleep(1.5)
+         #Left turn
+         kit = Motorkit(0x40)
+         kit.motor1.throttle = -0.72
+         kit.Motor2.throttle = 0.75
+         time.sleep(1.5)
 
         return jsonify("left")
     else:
@@ -122,4 +126,4 @@ def left():
 #Allows app to run
 if __name__ == '__main__':
     app.run(host='192.168.1.28', port=4444)
-    #kit = Motorkit(0x40)
+ 
