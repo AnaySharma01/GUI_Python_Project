@@ -109,7 +109,7 @@ def backward():
        return jsonify("not logged in")
 @app.route('/left')
 def left():
-    # if 'username' in session:
+    if 'username' in session:
     #     #Left turn
     #     kit.motor1.throttle = -0.72
     #     kit.Motor2.throttle = 0.75
