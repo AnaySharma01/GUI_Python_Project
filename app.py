@@ -86,7 +86,7 @@ def right():
           # Right turn
           kit.motor1.throttle = -0.72
           kit.Motor2.throttle = 0.72
-          time.sleep(0.79)
+ 
 
           return jsonify("right")
     else:
@@ -98,7 +98,7 @@ def forward():
           kit.motor1.throttle = 0.732
           kit.motor2.throttle = 0.7
         # Run both motors for 3.5 seconds
-          time.sleep(3.5)
+   
 
           return jsonify("forward")
     else:
@@ -110,7 +110,7 @@ def backward():
           kit.motor1.throttle = -0.81
           kit.motor2.throttle = -0.7
           #Run both motors for 3.5 seconds
-          time.sleep(3.5)
+
           return jsonify("backward")
     else:
        return jsonify("not logged in")
@@ -120,7 +120,7 @@ def left():
          #Left turn
          kit.motor1.throttle = -0.72
          kit.motor2.throttle = 0.75
-         time.sleep(1.5)
+
 
          return jsonify("left")
     else:
