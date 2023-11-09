@@ -1,5 +1,5 @@
 #imports packages
-from flask import *
+from flask import Flask, request, jsonify
 import sqlite3 
 import bcrypt
 import time
@@ -9,7 +9,7 @@ from adafruit_motorkit import MotorKit
 app = Flask(__name__)
 #used for session
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-
+kit = MotorKit(0x40)
 #gets database connection
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -119,7 +119,7 @@ def left():
     if 'username' in session:
          #Left turn
          kit.motor1.throttle = -0.72
-         kit.Motor2.throttle = 0.75
+         kit.motor2.throttle = 0.75
          time.sleep(1.5)
 
          return jsonify("left")
@@ -131,7 +131,7 @@ def right():
     if 'username' in session:
           # Stops Motors
           kit.motor1.throttle = 0
-          kit.Motor2.throttle = 0
+          kit.motor2.throttle = 0
 
           return jsonify("right")
     else:
