@@ -17,11 +17,12 @@
   </style>
   <script>
     $(function() {
+  
         $(".apicall").click(function(event) {
     event.preventDefault();
     $.ajax({
       url: $(this).attr("href"),
-      type: "GET",
+      type: "GET, POST",
       dataType: "json",
       success: function(data) {
         $("#result").html(data);
