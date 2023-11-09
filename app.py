@@ -127,7 +127,7 @@ def left():
        return jsonify("not logged in")
 
 @app.route('/stop')
-def right():
+def stop():
     if 'username' in session:
           # Stops Motors
           kit.motor1.throttle = 0
