@@ -6,7 +6,7 @@ import time
 from adafruit_motorkit import MotorKit
 
 # Create a Flask app
-app = Flask(__name)
+app = Flask(__name__)
 # Set a secret key for sessions
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
