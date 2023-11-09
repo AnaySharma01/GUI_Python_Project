@@ -98,7 +98,7 @@ def forward():
           kit.motor1.throttle = 0.732
           kit.motor2.throttle = 0.7
         # Run both motors for 3.5 seconds
-         time.sleep(2)
+          time.sleep(2)
 
           return jsonify("forward")
     else:
