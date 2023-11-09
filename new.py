@@ -188,5 +188,5 @@ def stop():
     kit.motor2.throttle = 0.0
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4445)  # Changed host to allow external access
+    app.run(host='192.168.1.28', port=4444)  # Changed host to allow external access
 
