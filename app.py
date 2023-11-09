@@ -84,9 +84,9 @@ def start():
 def right():
     if 'username' in session:
           # Right turn
-          kit.motor1.throttle = -0.72
-          kit.Motor2.throttle = 0.72
-          time.sleep(2)
+          kit.motor1.throttle = 0.72
+          kit.motor2.throttle = -0.72
+          time.sleep(0.5)
 
           return jsonify("right")
     else:
@@ -98,7 +98,7 @@ def forward():
           kit.motor1.throttle = 0.732
           kit.motor2.throttle = 0.7
         # Run both motors for 3.5 seconds
-          time.sleep(2)
+          time.sleep(0.5)
 
           return jsonify("forward")
     else:
@@ -110,7 +110,7 @@ def backward():
           kit.motor1.throttle = -0.81
           kit.motor2.throttle = -0.7
           #Run both motors for 3.5 seconds
-          time.sleep(2)
+          time.sleep(0.5)
           return jsonify("backward")
     else:
        return jsonify("not logged in")
@@ -118,9 +118,9 @@ def backward():
 def left():
     if 'username' in session:
          #Left turn
-         kit.motor1.throttle = -0.72
-         kit.motor2.throttle = 0.75
-         time.sleep(2)
+         kit.motor1.throttle = 0.72
+         kit.motor2.throttle = -0.75
+         time.sleep(0.5)
 
          return jsonify("left")
     else:
