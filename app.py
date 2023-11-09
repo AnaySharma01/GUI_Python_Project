@@ -3,7 +3,7 @@ from flask import *
 import sqlite3 
 import bcrypt
 import time
-from adafruit_motorkit import Motorkit
+from adafruit_motorkit import MotorKit
 
  #creates flask app
 app = Flask(__name__)
