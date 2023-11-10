@@ -23,7 +23,7 @@
     <script>
     $(function() {
 
-        $(".apicall").click(function(event) {
+    $(".apicall").click(function(event) {
     event.preventDefault();
     $.ajax({
       url: $(this).attr("href"),
@@ -32,9 +32,9 @@
       success: function(data) {
         $("#result").html(data);
       }
-    });
-  });
-    });
+        });
+          });
+            });
   </script>
 </head>
 <body>
