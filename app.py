@@ -5,11 +5,15 @@ import bcrypt
 import time
 from adafruit_motorkit import MotorKit
 
+#creates new motor kit
+kit = MotorKit(0x40)
+
  #creates flask app
 app = Flask(__name__)
+
 #used for session
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-kit = MotorKit(0x40)
+
 #gets database connection
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -23,8 +27,9 @@ def index():
         return render_template('index.html',firstname=session['username'])
     return render_template('login.html')
 
-@app.route('/login',methods=['GET', 'POST'])
-def login( ):
+#navigates to login page
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
     #gets user
     if request.method == 'POST':
       conn = get_db_connection()
@@ -42,7 +47,7 @@ def login( ):
 
 #creates registration page
 @app.route('/registration',methods=['GET', 'POST'])
-def registration( ):
+def registration():
     #saves user
     if request.method == 'POST':
         firstname=request.form["fname"]
@@ -69,12 +74,13 @@ def registration( ):
 #logs out and redirects to login page
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
+    #removes the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('login'))
 
 @app.route('/started')
 def start():
+    #starts robot
     if 'username' in session:
           return jsonify("started")
     else:
@@ -83,9 +89,10 @@ def start():
 @app.route('/right')
 def right():
     if 'username' in session:
-          # Right turn
+          #moves robot right
           kit.motor1.throttle = -0.72
           kit.motor2.throttle = 0.72
+          #runs both motors for 0.3 seconds
           time.sleep(0.3)
 
           return jsonify("right")
@@ -94,22 +101,21 @@ def right():
 @app.route('/forward')
 def forward():
     if 'username' in session:
-          # Forward at full speed
+          #moves robot forward 
           kit.motor1.throttle = 0.732
           kit.motor2.throttle = 0.7
-        # Run both motors for 3.5 seconds
+         #runs both motors for 0.3 seconds
           time.sleep(0.3)
-
           return jsonify("forward")
     else:
        return jsonify("not logged in")
 @app.route('/backward')
 def backward():
     if 'username' in session:
-          #Backward at full speed
+          #moves robot backwards
           kit.motor1.throttle = -0.81
           kit.motor2.throttle = -0.7
-          #Run both motors for 3.5 seconds
+          #runs both motors for 0.3 seconds
           time.sleep(0.3)
           return jsonify("backward")
     else:
@@ -117,9 +123,10 @@ def backward():
 @app.route('/left')
 def left():
     if 'username' in session:
-         #Left turn
+         #moves robot left
          kit.motor1.throttle = 0.72
          kit.motor2.throttle = -0.75
+         #runs both motors for 0.3 seconds
          time.sleep(0.3)
 
          return jsonify("left")
@@ -129,7 +136,7 @@ def left():
 @app.route('/stop')
 def stop():
     if 'username' in session:
-          # Stops Motors
+          #stops both motors
           kit.motor1.throttle = 0
           kit.motor2.throttle = 0
           
