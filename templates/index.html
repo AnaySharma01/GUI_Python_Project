@@ -11,6 +11,11 @@
       grid-template-columns: repeat(5, 1fr);
       grid-gap: 1rem;
     }
+    .center {
+ 		text-align: center;
+        
+  		border: 1px solid black;
+	}
     a {
       text-decoration: none;
     }
@@ -34,19 +39,29 @@
 </head>
 <body>
   <h1>Welcome  {{firstname}}</h1>
-  <div class="grid-container">
+  <div class="grid-container center">
+    <div></div>
     <div></div>
     <div><a class="apicall" href="http://192.168.1.28:4444/forward">↑</a></div>
     <div></div>
+    <div></div>
+    
+    <div></div>
+    <div></div>
     <div><a class="apicall" href="http://192.168.1.28:4444/start">🟢</a></div>
     <div> </div>
+    <div></div>
+    
     <div><a class="apicall" href="http://192.168.1.28:4444/left">←</a></div>
-    <div> </div>
-    <div><a class="apicall" href="http://192.168.1.28:4444/right">→</a></div>
     <div> </div>
     <div><a class="apicall" href="http://192.168.1.28:4444/stop">🛑</a></div>
     <div> </div>
+    <div><a class="apicall" href="http://192.168.1.28:4444/right">→</a></div>
+    
+    <div> </div>
+    <div> </div>
     <div><a class="apicall" href="http://192.168.1.28:4444/backward">↓</a></div>
+    <div> </div>
     <div> </div>
 </div>
 <span>Movements</span><div id="result"></div>
