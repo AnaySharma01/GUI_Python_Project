@@ -11,7 +11,7 @@ kit = MotorKit(0x40)
  #creates flask app
 app = Flask(__name__)
 
-#used for session
+#used for session 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 #gets database connection
@@ -30,7 +30,7 @@ def index():
 #navigates to login page
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-    #gets user
+    #checks user credentials
     if request.method == 'POST':
       conn = get_db_connection()
       user = conn.execute('SELECT * from user where username = ? ',
@@ -48,7 +48,7 @@ def login():
 #creates registration page
 @app.route('/registration',methods=['GET', 'POST'])
 def registration():
-    #saves user
+    #saves user information
     if request.method == 'POST':
         firstname=request.form["fname"]
         lastname=request.form["lname"]
@@ -77,7 +77,7 @@ def logout():
     #removes the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('login'))
-
+#Routes for controlling the robot
 @app.route('/started')
 def start():
     #starts robot
@@ -85,7 +85,7 @@ def start():
           return jsonify("started")
     else:
        return jsonify("not logged in")
-     
+ #Move the robor right    
 @app.route('/right')
 def right():
     if 'username' in session:
@@ -98,6 +98,7 @@ def right():
           return jsonify("right")
     else:
        return jsonify("not logged in")
+ #Move the robot forward
 @app.route('/forward')
 def forward():
     if 'username' in session:
@@ -110,6 +111,7 @@ def forward():
     else:
        return jsonify("not logged in")
 @app.route('/backward')
+#Move the robot backward
 def backward():
     if 'username' in session:
           #moves robot backwards
@@ -121,6 +123,7 @@ def backward():
     else:
        return jsonify("not logged in")
 @app.route('/left')
+#Move the robot left
 def left():
     if 'username' in session:
          #moves robot left
@@ -132,7 +135,7 @@ def left():
          return jsonify("left")
     else:
        return jsonify("not logged in")
-
+#Stop the robot
 @app.route('/stop')
 def stop():
     if 'username' in session:
