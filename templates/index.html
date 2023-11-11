@@ -1,71 +1,96 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <!-- Title of the webpage -->
     <title>Home</title>
+
+    <!-- Include jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Styling for the webpage -->
     <style>
         .grid-container {
-          display: grid;
-          width: 200px;
-          length: 100px;
-          grid-template-columns: repeat(5, 1fr);
-          grid-gap: 1rem;
+            display: grid;
+            width: 200px;
+            length: 100px;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 1rem;
         }
-        .center {
-             text-align: center;
 
-              border: 1px solid black;
+        .center {
+            text-align: center;
+            border: 1px solid black;
         }
+
         a {
-          text-decoration: none;
+            text-decoration: none;
         }
     </style>
+
+    <!-- JavaScript code -->
     <script>
-    $(function() {
+        // jQuery function to perform AJAX requests
+        $(function () {
 
-    $(".apicall").click(function(event) {
-    event.preventDefault();
-    $.ajax({
-      url: $(this).attr("href"),
-      type: "GET",
-      dataType: "json",
-      success: function(data) {
-        $("#result").html(data);
-      }
-        });
-          });
+            // Event handler for clicking elements with the class "apicall"
+            $(".apicall").click(function (event) {
+                event.preventDefault();
+
+                // Perform AJAX request using the href attribute of the clicked element
+                $.ajax({
+                    url: $(this).attr("href"),
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        // Display the result in the element with id "result"
+                        $("#result").html(data);
+                    }
+                });
             });
-  </script>
+        });
+    </script>
 </head>
+
 <body>
-<h1>Welcome {{firstname}}</h1>
-<div class="grid-container center">
-    <div></div>
-    <div></div>
-    <div><a class="apicall" href="http://192.168.1.28:4444/forward">↑</a></div>
-    <div></div>
-    <div></div>
+    <!-- Display a welcome message with dynamic content -->
+    <h1>Welcome {{firstname}}</h1>
 
-    <div></div>
-    <div></div>
-    <div><a class="apicall" href="http://192.168.1.28:4444/start">🟢</a></div>
-    <div></div>
-    <div></div>
+    <!-- Grid container for movement buttons -->
+    <div class="grid-container center">
+        <div></div>
+        <div></div>
+        <div><a class="apicall" href="http://192.168.1.28:4444/forward">↑</a></div>
+        <div></div>
+        <div></div>
 
-    <div><a class="apicall" href="http://192.168.1.28:4444/left">←</a></div>
-    <div></div>
-    <div><a class="apicall" href="http://192.168.1.28:4444/stop">🛑</a></div>
-    <div></div>
-    <div><a class="apicall" href="http://192.168.1.28:4444/right">→</a></div>
+        <div></div>
+        <div></div>
+        <div><a class="apicall" href="http://192.168.1.28:4444/start">🟢</a></div>
+        <div></div>
+        <div></div>
 
-    <div></div>
-    <div></div>
-    <div><a class="apicall" href="http://192.168.1.28:4444/backward">↓</a></div>
-    <div></div>
-    <div></div>
-</div>
-<span>Movements</span>
-<div id="result"></div>
-<br/><br/><br/><br/>
+        <div><a class="apicall" href="http://192.168.1.28:4444/left">←</a></div>
+        <div></div>
+        <div><a class="apicall" href="http://192.168.1.28:4444/stop">🛑</a></div>
+        <div></div>
+        <div><a class="apicall" href="http.://192.168.1.28:4444/right">→</a></div>
+
+        <div></div>
+        <div></div>
+        <div><a class="apicall" href="http://192.168.1.28:4444/backward">↓</a></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <!-- Display a label for movements -->
+    <span>Movements</span>
+
+    <!-- Display the result of the API calls -->
+    <div id="result"></div>
+
+    <!-- Add some spacing at the end of the page -->
+    <br /><br /><br /><br />
 </body>
+
 </html>
