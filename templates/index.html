@@ -12,12 +12,18 @@
     <style>
         .grid-container {
             display: grid;
-            width: 200px;
-            length: 100px;
+            width: 500px;
+            length: 500px;
             grid-template-columns: repeat(5, 1fr);
-            grid-gap: 1rem;
+            grid-gap: 5rem;
         }
-
+		.grid-container2 {
+            display: grid;
+            width: 800px;
+            length: 100px;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10rem;
+        }
         .center {
             text-align: center;
             border: 1px solid black;
@@ -26,6 +32,7 @@
         a {
             text-decoration: none;
         }
+
     </style>
 
     <!-- JavaScript code -->
@@ -69,12 +76,18 @@
         <div><a class="apicall" href="http://192.168.1.28:4444/start">🟢</a></div>
         <div></div>
         <div></div>
+   
+         <div><a class="apicall" href="http://192.168.1.28:4444/left">←</a></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div><a class="apicall" href="http.://192.168.1.28:4444/right">→</a></div>
 
-        <div><a class="apicall" href="http://192.168.1.28:4444/left">←</a></div>
+        <div></div>
         <div></div>
         <div><a class="apicall" href="http://192.168.1.28:4444/stop">🛑</a></div>
         <div></div>
-        <div><a class="apicall" href="http.://192.168.1.28:4444/right">→</a></div>
+        <div></div>
 
         <div></div>
         <div></div>
@@ -82,29 +95,26 @@
         <div></div>
         <div></div>
     </div>
-    <div class="grid-container">
-    <!-- Display a label for movements -->
-    <span>Movements</span>
+    <br/>
+    <div class="grid-container2">
+      <!-- Display the result of the API calls -->
+    <div class="item1">Result</div>
                 
-    <!-- Display the result of the API calls -->
-    <div id="result"></div>
-        
-    <div class="grid-container">
-    <div></div>
     <!-- Display a label for video feed -->
-    <span>Video Feed</span>
-    <div class="grid-container">
-    <div></div>
+    <div class="item2">Video Feed</div>
+    
     <!-- Display a label for video feed -->
-    <span>Log History</span>
-    <div class="grid-container">
-    <div></div>
-    <!-- Display a label for video feed -->
-    <span>Blank Feed</span>
+    <div class="item3">Log History</div>
+
+   <!-- Display a label for video feed -->
+    <div class="item4">Blank Feed</div>
+</div>
+   
+    <span></span>
         
 
     <!-- Add some spacing at the end of the page -->
-    <br /><br /><br /><br />
+    <br/><br /><br /><br/>
 </body>
 
 </html>
