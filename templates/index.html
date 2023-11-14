@@ -10,29 +10,52 @@
 
     <!-- Styling for the webpage -->
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .grid-container2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .item1,
+        .item2,
+        .item3,
+        .item4 {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
         .grid-container {
             display: grid;
-            width: 500px;
-            length: 500px;
             grid-template-columns: repeat(5, 1fr);
-            grid-gap: 5rem;
+            grid-gap: 10px;
         }
-		.grid-container2 {
-            display: grid;
-            width: 800px;
-            length: 100px;
-            grid-template-columns: repeat(2, 1fr);
-            grid-gap: 10rem;
-        }
+
         .center {
             text-align: center;
-            border: 1px solid black;
         }
 
         a {
             text-decoration: none;
+            display: block;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            color: #333;
+            font-weight: bold;
         }
-
     </style>
 
     <!-- JavaScript code -->
@@ -63,58 +86,64 @@
     <!-- Display a welcome message with dynamic content -->
     <h1>Welcome {{firstname}}</h1>
 
-    <!-- Grid container for movement buttons -->
-    <div class="grid-container center">
-        <div></div>
-        <div></div>
-        <div><a class="apicall" href="http://192.168.1.28:4444/forward">↑</a></div>
-        <div></div>
-        <div></div>
-
-        <div></div>
-        <div></div>
-        <div><a class="apicall" href="http://192.168.1.28:4444/start">🟢</a></div>
-        <div></div>
-        <div></div>
-   
-         <div><a class="apicall" href="http://192.168.1.28:4444/left">←</a></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div><a class="apicall" href="http.://192.168.1.28:4444/right">→</a></div>
-
-        <div></div>
-        <div></div>
-        <div><a class="apicall" href="http://192.168.1.28:4444/stop">🛑</a></div>
-        <div></div>
-        <div></div>
-
-        <div></div>
-        <div></div>
-        <div><a class="apicall" href="http://192.168.1.28:4444/backward">↓</a></div>
-        <div></div>
-        <div></div>
-    </div>
-    <br/>
     <div class="grid-container2">
-      <!-- Display the result of the API calls -->
-    <div class="item1">Result</div>
-                
-    <!-- Display a label for video feed -->
-    <div class="item2">Video Feed</div>
-    
-    <!-- Display a label for video feed -->
-    <div class="item3">Log History</div>
+        <!-- Display the result of the API calls -->
+        <div class="item1">
+            <strong>Control Panel</strong>
+            <!-- Grid container for movement buttons -->
+            <div class="grid-container center">
+                <div></div>
+                <div></div>
+                <div><a class="apicall" href="http://192.168.1.28:4444/forward">↑</a></div>
+                <div></div>
+                <div></div>
 
-   <!-- Display a label for video feed -->
-    <div class="item4">Blank Feed</div>
-</div>
-   
-    <span></span>
-        
+                <div></div>
+                <div></div>
+                <div><a class="apicall" href="http://192.168.1.28:4444/start">🟢</a></div>
+                <div></div>
+                <div></div>
+
+                <div><a class="apicall" href="http://192.168.1.28:4444/left">←</a></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div><a class="apicall" href="http://192.168.1.28:4444/right">→</a></div>
+
+                <div></div>
+                <div></div>
+                <div><a class="apicall" href="http://192.168.1.28:4444/stop">🛑</a></div>
+                <div></div>
+                <div></div>
+
+                <div></div>
+                <div></div>
+                <div><a class="apicall" href="http://192.168.1.28:4444/backward">↓</a></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <!-- Display a label for video feed -->
+        <div class="item2">
+            <strong>Video Feed</strong>
+        </div>
+
+        <!-- Display a label for video feed -->
+        <div class="item3">
+            <strong>Log History</strong>
+        </div>
+
+        <!-- Display a label for video feed -->
+        <div class="item4">
+            <strong>Blank Feed</strong>
+        </div>
+    </div>
+
+    <span id="result"></span>
 
     <!-- Add some spacing at the end of the page -->
-    <br/><br /><br /><br/>
+    <br /><br /><br /><br />
 </body>
 
 </html>
