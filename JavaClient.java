@@ -1,3 +1,4 @@
+//Imports libraries
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicArrowButton;
@@ -11,22 +12,23 @@ import java.net.URL;
 
 public class JavaClient extends JFrame {
 
-
+    //Creates arrow buttons
     private JButton forwardBtn = new BasicArrowButton(BasicArrowButton.NORTH);
     private JButton leftBtn = new BasicArrowButton(BasicArrowButton.WEST);
     private JButton rightBtn = new BasicArrowButton(BasicArrowButton.EAST);
     private JButton backBtn = new BasicArrowButton(BasicArrowButton.SOUTH);
 
-
+    //Creates input boxes
     private JTextField textTurn = new JTextField("0");
     private JTextField textTime = new JTextField("0");
     private JLabel resultText = new JLabel("");
 
 
     public JavaClient() {
+        //Adds title
         super("JavaClient");
 
-
+        //Grids buttons
         this.add(resultText, BorderLayout.NORTH);
 
 
@@ -57,9 +59,7 @@ public class JavaClient extends JFrame {
         buttonPanel.add(new JPanel());
         buttonPanel.add(new JPanel());
 
-
-
-
+        //Grids input boxes
         JPanel textPanel = new JPanel();
         textPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         this.add(textPanel, BorderLayout.SOUTH);
@@ -68,8 +68,9 @@ public class JavaClient extends JFrame {
         textPanel.add(textTurn);
         textPanel.add(new JLabel("Time:"));
         textPanel.add(textTime);
-        // This method will set adjust the size of the container so it can contain all other controls
         pack();
+        
+        //Calls movement functions for buttons from index.html
         forwardBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -102,31 +103,31 @@ public class JavaClient extends JFrame {
 
 
     private String moveRobot(String direction, String turn, String time) {
-        // Replace the URL with the actual REST API endpoint
+        //Sets the url for client
         String apiUrl = "http://127.0.0.1:5000/move?direction=" + direction + "&turn=" + turn + "&time=" + time;
         String returnText = "";
         try {
-            // Create a URL object with the API endpoint
+            // Creates a URL object with the API endpoint
             URL url = new URL(apiUrl);
 
 
-            // Open a connection to the URL
+            // Opens a connection to the URL
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 
-            // Set the request method to GET
+            //Sets the request method to GET
             connection.setRequestMethod("GET");
 
 
-            // Get the response code
+            // Gets the response code
             int responseCode = connection.getResponseCode();
 
 
-            // Check if the request was successful (HTTP 200 OK)
+            // Checks if the request was successful (HTTP 200 OK)
             if (responseCode == HttpURLConnection.HTTP_OK) {
 
 
-                // Read the response from the input stream
+                // Reads the response from the input stream
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
                 StringBuilder response = new StringBuilder();
@@ -135,18 +136,19 @@ public class JavaClient extends JFrame {
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
-                // Close the reader
+                // Closes the reader
                 reader.close();
+                //If successful
                 if ("\"success\"".equals(response.toString())) {
                     returnText = "Robot Moved Parameters: Direction-" + direction + " Time-" + time + " seconds Turn-"+turn +" degrees";
                 }
             } else {
-                // Print an error message if the request was not successful
+                // Prints an error message if the request was not successful
                 returnText = "Error: " + responseCode;
             }
 
 
-            // Close the connection
+            // Closes the connection
             connection.disconnect();
 
 
@@ -158,7 +160,9 @@ public class JavaClient extends JFrame {
 
 
     public static void main(String[] args) {
+        //Creates a new client
         JavaClient app = new JavaClient();
+        //Sets the client settings
         app.setSize(600, 600);
         app.setVisible(true);
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
