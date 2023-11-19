@@ -80,6 +80,56 @@ def left():
          return jsonify("left")
     else:
        return jsonify("not logged in")
+
+@app.route('/move')
+#Moves the robot
+def moveRobot():
+    rbt_direction = request.args.get('direction')
+    rbt_turn = float(request.args.get('turn'))
+    rbt_time = float(request.args.get('time'))
+    if rbt_direction == 'forward':
+        #moves robot forward
+          kit.motor1.throttle = 0.732
+          kit.motor2.throttle = 0.7
+         #runs both motors for _ seconds
+          time.sleep(rbt_time)
+          #stops both motors
+          kit.motor1.throttle = 0
+          kit.motor2.throttle = 0
+    elif rbt_direction == 'backward':
+        # moves robot backwards
+        kit.motor1.throttle = -0.81
+        kit.motor2.throttle = -0.7
+        # runs both motors for _ seconds
+        time.sleep(rbt_time)
+        # stops both motors
+        kit.motor1.throttle = 0
+        kit.motor2.throttle = 0
+    elif rbt_direction == 'left':
+        # moves robot backwards
+        # moves robot left
+        kit.motor1.throttle = 0.72
+        kit.motor2.throttle = -0.75
+        # runs both motors for _ seconds
+        time.sleep(rbt_turn*(0.3/90))
+        # stops both motors
+        kit.motor1.throttle = 0
+        kit.motor2.throttle = 0
+    elif rbt_direction == 'right':
+        # moves robot right
+        kit.motor1.throttle = -0.72
+        kit.motor2.throttle = 0.72
+        # runs both motors for _ seconds
+        time.sleep(rbt_turn*(0.3/90))
+        # stops both motors
+        kit.motor1.throttle = 0
+        kit.motor2.throttle = 0
+    print(rbt_turn + "turn ")
+    print(rbt_direction + "turn ")
+    print(rbt_time + "turn ")
+    return jsonify("success")
+
+
 #Stop the robot
 @app.route('/stop')
 def stop():
