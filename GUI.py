@@ -131,7 +131,14 @@ def moveRobot():
     return jsonify("success")
  else:
        return jsonify("not logged in")
-
+  
+   elif rbt_direction == 'stop':
+        # stops robot
+        kit.motor1.throttle = 0
+        kit.motor2.throttle = 0
+    return jsonify("success")
+   else:
+       return jsonify("not logged in")
 #Stop the robot
 @app.route('/stop')
 def stop():
