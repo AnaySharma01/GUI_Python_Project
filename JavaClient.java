@@ -20,8 +20,8 @@ public class JavaClient extends JFrame {
     private JButton backBtn = new BasicArrowButton(BasicArrowButton.SOUTH);
 
     //Creates Start and Stop buttons
-    JButton stopButton = new JButton("Stop");
-    JButton startButton = new JButton("Start");
+    JButton stopBtn = new JButton("Stop");
+    JButton startBtn = new JButton("Start");
     
     //Creates input boxes
     private JTextField textTurn = new JTextField("0");
@@ -44,7 +44,7 @@ public class JavaClient extends JFrame {
         panel.add(new JLabel());    // (1,4)
         panel.add(new JLabel());    // (1,5)
         panel.add(leftBtn);      // (2,1)
-        panel.add(startButton);     // (2,2)
+        panel.add(startBtn);     // (2,2)
         panel.add(new JLabel());    // (2,3)
         panel.add(stopBtn);      // (2,4)
         panel.add(rightBtn);     // (2,5)
@@ -90,6 +90,12 @@ public class JavaClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 resultText.setText(moveRobot("right", textTurn.getText(), textTime.getText()));
+            }
+        });
+        stopBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resultText.setText(moveRobot("stop"));
             }
         });
     }
