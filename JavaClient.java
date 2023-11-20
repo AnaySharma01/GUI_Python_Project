@@ -22,7 +22,7 @@ public class JavaClient extends JFrame {
     //Creates Start and Stop buttons
     JButton stopBtn = new JButton("Stop");
     JButton startBtn = new JButton("Start");
-    
+
     //Creates input boxes
     private JTextField textTurn = new JTextField("0");
     private JTextField textTime = new JTextField("0");
@@ -36,17 +36,10 @@ public class JavaClient extends JFrame {
         //Grids buttons
         this.add(resultText, BorderLayout.NORTH);
 
-        // Set size for Start and Stop buttons to 50%
-        Dimension buttonSize = new Dimension(50, 50);
-        startButton.setPreferredSize(buttonSize);
-        stopButton.setPreferredSize(buttonSize);
 
-        // Set background color for Start button to green and Stop button to red
-        startButton.setBackground(Color.GREEN);
-        stopButton.setBackground(Color.RED);
-
-        // Create a panel with a GridLayout
-        JPanel panel = new JPanel(new GridLayout(3, 5));
+      // Create a panel with a GridLayout
+      JPanel panel = new JPanel(new GridLayout(3, 5));
+      //Creates buttons
         panel.add(new JLabel());    // (1,1)
         panel.add(new JLabel());    // (1,2)
         panel.add(forwardBtn);   // (1,3)
@@ -73,7 +66,7 @@ public class JavaClient extends JFrame {
         textPanel.add(new JLabel("Time:"));
         textPanel.add(textTime);
         pack();
-        
+
         //Calls movement functions for buttons from client
         forwardBtn.addActionListener(new ActionListener() {
             @Override
