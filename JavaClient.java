@@ -1,16 +1,7 @@
-//Imports libraries
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicArrowButton;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class JavaClient extends JFrame {
+
     //Server url for rest api server
     private static final String SERVER_URL = "http://192.168.1.28:4444/";    
     //Creates arrow buttons
@@ -18,44 +9,38 @@ public class JavaClient extends JFrame {
     private JButton leftBtn = new BasicArrowButton(BasicArrowButton.WEST);
     private JButton rightBtn = new BasicArrowButton(BasicArrowButton.EAST);
     private JButton backBtn = new BasicArrowButton(BasicArrowButton.SOUTH);
-
-    //Creates Start and Stop buttons
     JButton stopBtn = new JButton("Stop");
     JButton startBtn = new JButton("Start");
-
+    
     //Creates input boxes
     private JTextField textTurn = new JTextField("0");
     private JTextField textTime = new JTextField("0");
     private JLabel resultText = new JLabel("");
-
-
     public JavaClient() {
         //Adds title
         super("JavaClient");
-
         //Grids buttons
         this.add(resultText, BorderLayout.NORTH);
-
-
-      // Create a panel with a GridLayout
-      JPanel panel = new JPanel(new GridLayout(3, 5));
-      //Creates buttons
-        panel.add(new JLabel());    // (1,1)
-        panel.add(new JLabel());    // (1,2)
-        panel.add(forwardBtn);   // (1,3)
-        panel.add(new JLabel());    // (1,4)
-        panel.add(new JLabel());    // (1,5)
-        panel.add(leftBtn);      // (2,1)
-        panel.add(startBtn);     // (2,2)
-        panel.add(new JLabel());    // (2,3)
-        panel.add(stopBtn);      // (2,4)
-        panel.add(rightBtn);     // (2,5)
-        panel.add(new JLabel());    // (3,1)
-        panel.add(new JLabel());    // (3,2)
-        panel.add(backBtn);  // (3,3)
-        panel.add(new JLabel());    // (3,4)
-        panel.add(new JLabel());    // (3,5)
-
+        JPanel buttonPanel = new JPanel();
+        this.add(buttonPanel, BorderLayout.CENTER);
+        buttonPanel.setLayout(new GridLayout(5, 3));
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new startBtn());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new stopBtn());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(forwardBtn);
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(leftBtn);
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(rightBtn);
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(backBtn);
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
         //Grids input boxes
         JPanel textPanel = new JPanel();
         textPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -74,8 +59,6 @@ public class JavaClient extends JFrame {
                 resultText.setText(moveRobot("forward", textTurn.getText(), textTime.getText()));
             }
         });
-
-
         backBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -101,10 +84,6 @@ public class JavaClient extends JFrame {
             }
         });
     }
-
-
-
-
     private String moveRobot(String direction, String turn, String time) {
         //Sets the url for client
         String apiUrl = SERVER_URL + "move?direction=" + direction + "&turn=" + turn + "&time=" + time;
@@ -112,30 +91,18 @@ public class JavaClient extends JFrame {
         try {
             // Creates a URL object with the API endpoint
             URL url = new URL(apiUrl);
-
-
             // Opens a connection to the URL
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-
             //Sets the request method to GET
             connection.setRequestMethod("GET");
-
-
             // Gets the response code
             int responseCode = connection.getResponseCode();
-
-
             // Checks if the request was successful (HTTP 200 OK)
             if (responseCode == HttpURLConnection.HTTP_OK) {
-
-
                 // Reads the response from the input stream
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
                 StringBuilder response = new StringBuilder();
-
-
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
@@ -149,19 +116,13 @@ public class JavaClient extends JFrame {
                 // Prints an error message if the request was not successful
                 returnText = "Error: " + responseCode;
             }
-
-
             // Closes the connection
             connection.disconnect();
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return returnText;
     }
-
-
     public static void main(String[] args) {
         //Creates a new client
         JavaClient app = new JavaClient();
