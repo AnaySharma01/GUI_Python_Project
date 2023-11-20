@@ -12,6 +12,7 @@ import java.net.URL;
 
 public class JavaClient extends JFrame {
 
+    private static final String SERVER_URL = "http://192.168.1.28:4444/";    
     //Creates arrow buttons
     private JButton forwardBtn = new BasicArrowButton(BasicArrowButton.NORTH);
     private JButton leftBtn = new BasicArrowButton(BasicArrowButton.WEST);
@@ -104,7 +105,7 @@ public class JavaClient extends JFrame {
 
     private String moveRobot(String direction, String turn, String time) {
         //Sets the url for client
-        String apiUrl = "http://192.168.1.28:4444/move?direction=" + direction + "&turn=" + turn + "&time=" + time;
+        String apiUrl = SERVER_URL + "move?direction=" + direction + "&turn=" + turn + "&time=" + time;
         String returnText = "";
         try {
             // Creates a URL object with the API endpoint
