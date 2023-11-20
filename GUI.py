@@ -84,6 +84,7 @@ def left():
 @app.route('/move')
 #Moves the robot
 def moveRobot():
+ if username is session:
     rbt_direction = request.args.get('direction')
     rbt_turn = float(request.args.get('turn'))
     rbt_time = float(request.args.get('time'))
@@ -128,7 +129,8 @@ def moveRobot():
     print(rbt_direction + "turn ")
     print(rbt_time + "turn ")
     return jsonify("success")
-
+ else:
+       return jsonify("not logged in")
 
 #Stop the robot
 @app.route('/stop')
