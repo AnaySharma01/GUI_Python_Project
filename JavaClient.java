@@ -36,8 +36,17 @@ public class JavaClient extends JFrame {
         //Grids buttons
         this.add(resultText, BorderLayout.NORTH);
 
+        // Set size for Start and Stop buttons to 50%
+        Dimension buttonSize = new Dimension(50, 50);
+        startButton.setPreferredSize(buttonSize);
+        stopButton.setPreferredSize(buttonSize);
 
-        JPanel buttonPanel = new JPanel();
+        // Set background color for Start button to green and Stop button to red
+        startButton.setBackground(Color.GREEN);
+        stopButton.setBackground(Color.RED);
+
+        // Create a panel with a GridLayout
+        JPanel panel = new JPanel(new GridLayout(3, 5));
         panel.add(new JLabel());    // (1,1)
         panel.add(new JLabel());    // (1,2)
         panel.add(forwardBtn);   // (1,3)
