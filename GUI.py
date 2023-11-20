@@ -125,9 +125,6 @@ def moveRobot():
         # stops both motors
         kit.motor1.throttle = 0
         kit.motor2.throttle = 0
-    print(rbt_turn + "turn ")
-    print(rbt_direction + "turn ")
-    print(rbt_time + "turn ")
     return jsonify("success")
  else:
        return jsonify("not logged in")
