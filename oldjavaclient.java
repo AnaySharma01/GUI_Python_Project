@@ -1,3 +1,25 @@
+import java.net.URL;
+
+public class JavaClient extends JFrame {
+
+    //Server url for rest api server
+    private static final String SERVER_URL = "http://192.168.1.28:4444/";    
+    //Creates arrow buttons
+    private JButton forwardBtn = new BasicArrowButton(BasicArrowButton.NORTH);
+    private JButton leftBtn = new BasicArrowButton(BasicArrowButton.WEST);
+    private JButton rightBtn = new BasicArrowButton(BasicArrowButton.EAST);
+    private JButton backBtn = new BasicArrowButton(BasicArrowButton.SOUTH);
+    //Creates input boxes
+    private JTextField textTurn = new JTextField("0");
+    private JTextField textTime = new JTextField("0");
+    private JLabel resultText = new JLabel("");
+    public JavaClient() {
+        //Adds title
+        super("JavaClient");
+        //Grids buttons
+        this.add(resultText, BorderLayout.NORTH);
+        JPanel buttonPanel = new JPanel();
+        this.add(buttonPanel, BorderLayout.CENTER);
         buttonPanel.setLayout(new GridLayout(5, 3));
         buttonPanel.add(new JPanel());
         buttonPanel.add(new JPanel());
