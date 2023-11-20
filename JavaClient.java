@@ -19,6 +19,10 @@ public class JavaClient extends JFrame {
     private JButton rightBtn = new BasicArrowButton(BasicArrowButton.EAST);
     private JButton backBtn = new BasicArrowButton(BasicArrowButton.SOUTH);
 
+    //Creates Start and Stop buttons
+    JButton stopButton = new JButton("Stop");
+    JButton startButton = new JButton("Start");
+    
     //Creates input boxes
     private JTextField textTurn = new JTextField("0");
     private JTextField textTime = new JTextField("0");
@@ -34,31 +38,21 @@ public class JavaClient extends JFrame {
 
 
         JPanel buttonPanel = new JPanel();
-        this.add(buttonPanel, BorderLayout.CENTER);
-        buttonPanel.setLayout(new GridLayout(5, 3));
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(new JPanel());
-
-
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(forwardBtn);
-        buttonPanel.add(new JPanel());
-
-
-        buttonPanel.add(leftBtn);
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(rightBtn);
-
-
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(backBtn);
-        buttonPanel.add(new JPanel());
-
-
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(new JPanel());
+        panel.add(new JLabel());    // (1,1)
+        panel.add(new JLabel());    // (1,2)
+        panel.add(forwardBtn);   // (1,3)
+        panel.add(new JLabel());    // (1,4)
+        panel.add(new JLabel());    // (1,5)
+        panel.add(leftBtn);      // (2,1)
+        panel.add(startButton);     // (2,2)
+        panel.add(new JLabel());    // (2,3)
+        panel.add(stopBtn);      // (2,4)
+        panel.add(rightBtn);     // (2,5)
+        panel.add(new JLabel());    // (3,1)
+        panel.add(new JLabel());    // (3,2)
+        panel.add(backBtn);  // (3,3)
+        panel.add(new JLabel());    // (3,4)
+        panel.add(new JLabel());    // (3,5)
 
         //Grids input boxes
         JPanel textPanel = new JPanel();
