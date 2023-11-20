@@ -70,7 +70,7 @@ public class JavaClient extends JFrame {
         textPanel.add(textTime);
         pack();
         
-        //Calls movement functions for buttons from index.html
+        //Calls movement functions for buttons from client
         forwardBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -104,7 +104,7 @@ public class JavaClient extends JFrame {
 
     private String moveRobot(String direction, String turn, String time) {
         //Sets the url for client
-        String apiUrl = "http://127.0.0.1:5000/move?direction=" + direction + "&turn=" + turn + "&time=" + time;
+        String apiUrl = "http://192.168.1.28:4444/move?direction=" + direction + "&turn=" + turn + "&time=" + time;
         String returnText = "";
         try {
             // Creates a URL object with the API endpoint
