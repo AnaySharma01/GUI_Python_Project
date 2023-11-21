@@ -25,4 +25,4 @@ def logout():
 
 #Allows app to run
 if __name__ == '__main__':
-    app.run(host='192.168.1.28', port=4444)
+    app.run(host='192.168.1.12', port=4444)
