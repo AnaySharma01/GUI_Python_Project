@@ -12,15 +12,15 @@ import java.net.URL;
 public class JavaClient extends JFrame {
 
     //Server url for rest api server
-    private static final String SERVER_URL = "http://192.168.1.28:4444/";    
+    private static final String SERVER_URL = "http://192.168.1.28:4444/";
     //Creates arrow buttons
     private JButton forwardBtn = new BasicArrowButton(BasicArrowButton.NORTH);
     private JButton leftBtn = new BasicArrowButton(BasicArrowButton.WEST);
     private JButton rightBtn = new BasicArrowButton(BasicArrowButton.EAST);
     private JButton backBtn = new BasicArrowButton(BasicArrowButton.SOUTH);
-    JButton stopBtn = new JButton("Stop");
-    JButton startBtn = new JButton("Start");
-    
+    private JButton stopBtn = new JButton("Stop");
+    private JButton startBtn = new JButton("Start");
+
     //Creates input boxes
     private JTextField textTurn = new JTextField("0");
     private JTextField textTime = new JTextField("0");
@@ -28,28 +28,45 @@ public class JavaClient extends JFrame {
     public JavaClient() {
         //Adds title
         super("JavaClient");
+        // Set background color for Start button to green and Stop button to red
+        startBtn.setBackground(Color.GREEN);
+        stopBtn.setBackground(Color.RED);
+
         //Grids buttons
         this.add(resultText, BorderLayout.NORTH);
         JPanel buttonPanel = new JPanel();
         this.add(buttonPanel, BorderLayout.CENTER);
-        buttonPanel.setLayout(new GridLayout(5, 3));
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(new startBtn());
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(new stopBtn());
+        buttonPanel.setLayout(new GridLayout(5, 5));
         buttonPanel.add(new JPanel());
         buttonPanel.add(new JPanel());
         buttonPanel.add(forwardBtn);
         buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(startBtn);
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+
         buttonPanel.add(leftBtn);
         buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
         buttonPanel.add(rightBtn);
+
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(stopBtn);
+        buttonPanel.add(new JPanel());
+        buttonPanel.add(new JPanel());
+
+        buttonPanel.add(new JPanel());
         buttonPanel.add(new JPanel());
         buttonPanel.add(backBtn);
         buttonPanel.add(new JPanel());
         buttonPanel.add(new JPanel());
-        buttonPanel.add(new JPanel());
-        buttonPanel.add(new JPanel());
+
         //Grids input boxes
         JPanel textPanel = new JPanel();
         textPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -89,7 +106,7 @@ public class JavaClient extends JFrame {
         stopBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                resultText.setText(moveRobot("stop"));
+                resultText.setText(moveRobot("stop","",""));
             }
         });
     }
