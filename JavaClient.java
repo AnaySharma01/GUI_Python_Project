@@ -13,7 +13,7 @@ import java.net.URL;
 public class JavaClient extends JFrame {
 
     //Server url for rest api server
-    private static final String SERVER_URL = "http://192.168.1.28:4444/";
+    private static final String SERVER_URL = "http://192.168.1.12:4444/";
     //Creates arrow buttons
     private JButton forwardBtn = new BasicArrowButton(BasicArrowButton.NORTH);
     private JButton leftBtn = new BasicArrowButton(BasicArrowButton.WEST);
