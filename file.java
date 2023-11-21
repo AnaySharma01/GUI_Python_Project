@@ -112,6 +112,6 @@ public class file extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Main());
+        SwingUtilities.invokeLater(() -> new file());
     }
 }
