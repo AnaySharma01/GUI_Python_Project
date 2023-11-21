@@ -7,11 +7,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Main extends JFrame {
+public class file extends JFrame {
 
     private static final String SERVER_URL = "http://192.168.1.28:4444";
 
-    public Main() {
+    public file() {
         setTitle("Robot Controller");
         setSize(400, 300); // Adjusted the size for the new grid
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
