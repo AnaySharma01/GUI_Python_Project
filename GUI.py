@@ -30,7 +30,7 @@ def start():
           return jsonify("started")
     else:
        return jsonify("not logged in")
- #Move the robor right    
+ #Move the robot right
 @app.route('/right')
 def right():
     if 'username' in session:
@@ -84,7 +84,7 @@ def left():
 @app.route('/move')
 #Moves the robot
 def moveRobot():
- if username is session:
+
     rbt_direction = request.args.get('direction')
     rbt_turn = float(request.args.get('turn'))
     rbt_time = float(request.args.get('time'))
@@ -125,18 +125,14 @@ def moveRobot():
         # stops both motors
         kit.motor1.throttle = 0
         kit.motor2.throttle = 0
-    return jsonify("success")
- else:
-       return jsonify("not logged in")
-  
-   elif rbt_direction == 'stop':
+    elif rbt_direction == 'stop':
         # stops robot
         kit.motor1.throttle = 0
         kit.motor2.throttle = 0
+    
     return jsonify("success")
-   else:
-       return jsonify("not logged in")
-#Stop the robot
+
+#Stops the robot
 @app.route('/stop')
 def stop():
     if 'username' in session:
