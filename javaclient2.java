@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class JavaClient extends JFrame {
+public class javaclient2 extends JFrame {
 
     //Server url for rest api server
     private static final String SERVER_URL = "http://192.168.1.28:4444/";    
@@ -25,7 +25,7 @@ public class JavaClient extends JFrame {
     private JLabel resultText = new JLabel("");
     public JavaClient() {
         //Adds title
-        super("JavaClient");
+        super("javaclient2");
         //Grids buttons
         this.add(resultText, BorderLayout.NORTH);
         JPanel buttonPanel = new JPanel();
@@ -124,7 +124,7 @@ public class JavaClient extends JFrame {
     }
     public static void main(String[] args) {
         //Creates a new client
-        JavaClient app = new JavaClient();
+        javaclient2 app = new javaclient2();
         //Sets the client settings
         app.setSize(600, 600);
         app.setVisible(true);
