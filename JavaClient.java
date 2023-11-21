@@ -159,4 +159,13 @@ public class JavaClient extends JFrame {
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setLocationRelativeTo(null);
     }
+    public static void showMain() {
+        //Creates a new client
+        JavaClient app = new JavaClient();
+        //Sets the client settings
+        app.setSize(600, 600);
+        app.setVisible(true);
+        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        app.setLocationRelativeTo(null);
+    }
 }
