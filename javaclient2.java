@@ -23,7 +23,7 @@ public class javaclient2 extends JFrame {
     private JTextField textTurn = new JTextField("0");
     private JTextField textTime = new JTextField("0");
     private JLabel resultText = new JLabel("");
-    public JavaClient() {
+    public javaclient2() {
         //Adds title
         super("javaclient2");
         //Grids buttons
