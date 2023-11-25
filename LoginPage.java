@@ -45,7 +45,7 @@ class LoginPage extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String usrname = username.getText();
-                String paswrd = password1.getText();
+                String paswrd = String.valueOf(password1.getPassword());
                 authenticate(usrname,paswrd);
             }
         });
