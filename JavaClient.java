@@ -150,7 +150,7 @@ public class JavaClient extends JFrame {
         }
         return returnText;
     }
-    public static void main(String[] args) {
+    public static void showMain() {
         //Creates a new client
         JavaClient app = new JavaClient();
         //Sets the client settings
