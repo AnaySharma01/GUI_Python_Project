@@ -112,7 +112,7 @@ def moveRobot():
         kit.motor1.throttle = 0.72
         kit.motor2.throttle = -0.75
         # runs both motors for _ seconds
-        time.sleep(rbt_turn*(0.3/90))
+        time.sleep(rbt_turn*(0.6/90))
         # stops both motors
         kit.motor1.throttle = 0
         kit.motor2.throttle = 0
@@ -121,7 +121,7 @@ def moveRobot():
         kit.motor1.throttle = -0.72
         kit.motor2.throttle = 0.72
         # runs both motors for _ seconds
-        time.sleep(rbt_turn*(0.3/90))
+        time.sleep(rbt_turn*(0.6/90))
         # stops both motors
         kit.motor1.throttle = 0
         kit.motor2.throttle = 0
