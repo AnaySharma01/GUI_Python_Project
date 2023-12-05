@@ -32,23 +32,3 @@ def registration():
     else:
      return render_template('registration.html')
 
-@app.route('/restregistration')
-def restregistration():
-    firstname=request.args.get("fname")
-    lastname=request.args.get("lname") 
-    username=request.args.get("username") 
-    salt= bcrypt.gensalt()
-    passowrd = bcrypt.hashpw(request.args.get("password").encode("utf-8"),salt).decode(encoding= "utf-8")
-    conn = get_db_connection()
-    user = conn.execute('SELECT * from user where username = ? ',
-                        (username,)).fetchone()
-    ret_val= ""
-    if user is None:
-        conn.execute('INSERT INTO user (username,password,first_name,last_name) VALUES (?, ?,?,?)',                          
-                         (username,passowrd, firstname, lastname ))
-        ret = "success"
-    else:
-        ret = f"User {username} already exist!"
-    conn.commit()
-    conn.close()
-    return jsonify(ret)
