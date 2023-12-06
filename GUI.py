@@ -86,8 +86,8 @@ def left():
 def moveRobot():
 
     rbt_direction = request.args.get('direction')
-    rbt_turn = float(request.args.get('turn'))
-    rbt_time = float(request.args.get('time'))
+    rbt_turn =  90
+    rbt_time = 10
     if rbt_direction == 'forward':
         #moves robot forward
           kit.motor1.throttle = 0.732
