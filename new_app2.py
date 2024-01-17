@@ -22,6 +22,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 # Global variable for control
 is_running = False
 
+webcam = cv2.VideoCapture(0)
 #gets database connection
 def get_db_connection():
     conn = sqlite3.connect('database.db')
