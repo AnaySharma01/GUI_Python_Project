@@ -222,6 +222,7 @@ def generate_raw_video():
 
 def generate_processed_video():
   global webcam
+  webcam = cv2.VideoCapture(0)
   while True:
       success, frame = webcam.read()
       if not success:
