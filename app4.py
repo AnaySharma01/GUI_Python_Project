@@ -78,33 +78,33 @@ def process_image(image):
 
 def generate_raw_video():
   
-#Starts the video
-global video
-webcam = cv.VideoCapture(0)
-
-#Creates the video dimensions
-width, height = 800, 600
-
-#Sets the video dimensions
-webcam.set(cv.CAP_PROP_FRAME_WIDTH, width)
-webcam.set(cv.CAP_PROP_FRAME_HEIGHT, height)
-
-  # Set the desired frame rate
-  frame_rate = 20  # You can adjust this value
-  prev_frame_time = 0
-
-  while True:
-      time_elapsed = time.time() - prev_frame_time
-      success, frame = video.read()
-      if not success:
-          break
-      if time_elapsed > 1./frame_rate:
-          prev_frame_time = time.time()
-          # Apply JPEG compression
-          ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])  
-          frame = buffer.tobytes()
-          yield (b'--frame\r\n'
-                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+ #Starts the video
+ global video
+ webcam = cv.VideoCapture(0)
+ 
+ #Creates the video dimensions
+ width, height = 800, 600
+ 
+ #Sets the video dimensions
+ webcam.set(cv.CAP_PROP_FRAME_WIDTH, width)
+ webcam.set(cv.CAP_PROP_FRAME_HEIGHT, height)
+ 
+   # Set the desired frame rate
+   frame_rate = 20  # You can adjust this value
+   prev_frame_time = 0
+ 
+   while True:
+       time_elapsed = time.time() - prev_frame_time
+       success, frame = video.read()
+       if not success:
+           break
+       if time_elapsed > 1./frame_rate:
+           prev_frame_time = time.time()
+           # Apply JPEG compression
+           ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])  
+           frame = buffer.tobytes()
+           yield (b'--frame\r\n'
+                  b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
         
 def generate_processed_video():
     global webcam
