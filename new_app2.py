@@ -136,20 +136,12 @@ def generate_raw_video():
   webcam = cv2.VideoCapture(0)
   webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 256)  # Set width
   webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)  # Set height
-
-  # Set the desired frame rate
-  frame_rate = 5  # You can adjust this value
-  prev_frame_time = 0
-
   while True:
-      time_elapsed = time.time() - prev_frame_time
       success, frame = webcam.read()
       if not success:
           break
-      if time_elapsed > 1./frame_rate:
-          prev_frame_time = time.time()
-          # Apply JPEG compression
-          ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])  
+      else:
+          ret, buffer = cv2.imencode('.jpg', frame)
           frame = buffer.tobytes()
           yield (b'--frame\r\n'
                  b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -158,19 +150,11 @@ def generate_processed_video():
     global webcam
     webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 256)  # Set width
     webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)  # Set height
-    # Set the desired frame rate
-    frame_rate = 20  # Adjust as needed
-    prev_frame_time = 0
-
     while True:
-        time_elapsed = time.time() - prev_frame_time
         success, frame = webcam.read()
         if not success:
             break
-
-        if time_elapsed > 1./frame_rate:
-            prev_frame_time = time.time()
-
+        else:
             # Existing processing code...
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             mask = mask_img(hsv)
