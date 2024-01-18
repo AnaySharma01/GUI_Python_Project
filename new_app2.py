@@ -138,7 +138,7 @@ def generate_raw_video():
   webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)  # Set height
 
   # Set the desired frame rate
-  frame_rate = 20  # You can adjust this value
+  frame_rate = 5  # You can adjust this value
   prev_frame_time = 0
 
   while True:
