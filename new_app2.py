@@ -7,7 +7,7 @@ from adafruit_motorkit import MotorKit
 from flask_cors import CORS
 import cv2
 import numpy as np
-from flask import Response  # Import this package for streaming video
+from flask import Response
 
 #creates new motor kit
 kit = MotorKit(0x40)
@@ -22,7 +22,6 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 # Global variable for control
 is_running = False
 
-webcam = cv2.VideoCapture(0)
 #gets database connection
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -30,118 +29,61 @@ def get_db_connection():
     return conn
 
 # Masking
-def mask_img(img, show=False):  # H  S  V
+def mask_img(img):  # H  S  V
     lower_thr = np.array([0, 0, 0])
     upper_thr = np.array([179, 255, 87])
     img_masked = cv2.inRange(img, lower_thr, upper_thr)
-    if show:
-        cv2.imshow("Masked Frame", img_masked)
     return img_masked
 
 # Canny Edge Detection
-def detect_edges(img, show=False):
-    # img_bgr = cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
-    img_gre = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(img_gre, (5, 5), 0)
-    img_canny = cv2.Canny(blur, 200, 400)
-    if show:
-        cv2.imshow("Canny Filter", img_canny)
-    return img_canny
+def detect_edges(img):
+  img_gre = img if len(img.shape) == 2 else cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+  blur = cv2.GaussianBlur(img_gre, (5, 5), 0)
+  img_canny = cv2.Canny(blur, 200, 400)
+  return img_canny
 
 # Cropping , Region of Interest
-def crop_roi(img, show=False):
+def crop_roi(img):
     height = img.shape[0]
     width = img.shape[1]
     # print(height, width)
     mask = np.zeros_like(img)
     cv2.rectangle(mask, (0, height // 2), (width, height), 255, -1)  # -1 -> fill
     roi = cv2.bitwise_and(img, mask)
-    if show:
-        cv2.imshow("mask", mask)
-        cv2.imshow("roi", roi)
     return roi
 
 # Hough Transform
-def detect_lines(img, show=False):
+def detect_lines(img):
     # function that we use is HoughLinesP
-    '''
-    Arguments for HoughLinesP
-
-    rho : Distance Precision
-    The hough Line Transform algorithm represents line in polar coordinates -> origin (rho) and angle (theta)
-    rho specifies distance resolution in pixels.
-    rho of 1 means two lines that are very close to each other but differ by a singe pixel will be considered different lines
-
-    theta : Angular Precision
-    It defines angular precision of hough transform. Means precision with which algo detects lines at different angle
-    It is defined in radians
-    If theta is np.Pi / 180 , that gives precision of 1 degree
-
-    min_threshold : Minimum number of votes required for line to be considered
-
-    lines : np.array([]) Empty array to store detected line segments
-
-    min_line_length : Minimum length of a line to be considered
-
-    max_line_gap : Max gap in segment to be considered as same line
-
-    '''
-
     rho = 1
     theta = np.pi / 180
     min_threshold = 10
     min_line_length = 20
     max_line_gap = 4
-
     lines = cv2.HoughLinesP(img, rho, theta, min_threshold, np.array([]), min_line_length, max_line_gap)
-
     return lines
-
-
-# Draw Lines
-def draw_lines(img, lines):
-    line_color = (0, 255, 82)
-    line_width = 2
-
-    for line in lines:
-        for x1, y1, x2, y2 in line:
-            cv2.line(img, (x1, y1), (x2, y2), line_color, line_width)
-    cv2.imshow("Lines", img)
-
-# Idea is to group positive slop and negative slop lines , which will define left and right lane markings
+  
+# Group positive slope and negative slope lines, which will define left and right lane markings
 def group_lines(img, lines):
     height = img.shape[0]
     width = img.shape[1]
-
     lane_lines = []
-
     # No lines found
     if lines is None:
         return lane_lines
-
     left_lane = []
     right_lane = []
-
     boundary = 1 / 3
     left_lane_area_width = width * (1 - boundary)
     right_lane_area_width = width * boundary
-
-
     for line in lines:
         for x1, y1, x2, y2 in line:
             # skip vertical lines as they have infinite slope
             if x1 == x2:
                 continue
-
-            # np.polyfit can be used to get slop and intercept from two points on the line
             coff = np.polyfit((x1, x2), (y1, y2), 1)
             slope = coff[0]
             intercept = coff[1]
-
-            # note that y axis is inverted in matrix of images. 
-            # so as x (width) increases, y(height) values decreases
-            # this is reason why slope of right nane is positive and left name is negative
-
             # positive slop -> right lane marking  \
             #                                       \
             #                                        \
@@ -150,8 +92,6 @@ def group_lines(img, lines):
                 # search area check
                 if x1 > right_lane_area_width and x2 > right_lane_area_width:
                     right_lane.append((slope, intercept))
-
-
             # negative slop -> left lane marking  /
             #                                    /
             #                                   /
@@ -169,9 +109,7 @@ def group_lines(img, lines):
         lane_lines.append(line_to_point(img, left_avg))
     if len(right_lane) > 0:
         lane_lines.append((line_to_point(img, right_avg)))
-
     return lane_lines
-
 
 # Create points from the lane lines with slop and intercept
 def line_to_point(img, line):
@@ -179,87 +117,84 @@ def line_to_point(img, line):
     intercept = line[1]
     height = img.shape[0]
     width = img.shape[1]
-
-    #
-    #
-    #      left      right
-    #     x1,y1      x1,y1
-    #
-    #
-    #
-    # x2,y2              x2,y2
-
-    # y = mx + c
-    # x = (y - c) / m
-
     y1 = int(height / 2)  # middle
     x1 = int((y1 - intercept) / slop)
     if x1 < 0:
         x1 = 0
     if x1 > width:
         x1 = width
-
     y2 = int(height)  # bottom
     x2 = int((y2 - intercept) / slop)
     if x2 < 0:
         x2 = 0
     if x2 > width:
         x2 = width
-    print(x1, y1, x2, y2)
     return [[x1, y1, x2, y2]]
 
 def generate_raw_video():
   global webcam
   webcam = cv2.VideoCapture(0)
+  webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 256)  # Set width
+  webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)  # Set height
+
+  # Set the desired frame rate
+  frame_rate = 20  # You can adjust this value
+  prev_frame_time = 0
+
   while True:
+      time_elapsed = time.time() - prev_frame_time
       success, frame = webcam.read()
       if not success:
           break
-      else:
-          ret, buffer = cv2.imencode('.jpg', frame)
+      if time_elapsed > 1./frame_rate:
+          prev_frame_time = time.time()
+          # Apply JPEG compression
+          ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])  
           frame = buffer.tobytes()
           yield (b'--frame\r\n'
                  b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
+        
 def generate_processed_video():
-  global webcam
-  webcam = cv2.VideoCapture(0)
-  while True:
-      success, frame = webcam.read()
-      if not success:
-          break
-      else:
-          # Convert frame to HSV (Hue, Saturation, Value) color space
-          hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    global webcam
+    webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 256)  # Set width
+    webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)  # Set height
+    # Set the desired frame rate
+    frame_rate = 20  # Adjust as needed
+    prev_frame_time = 0
 
-          # Threshold the HSV image to get only blue colors
-          mask = mask_img(hsv, show=False)
+    while True:
+        time_elapsed = time.time() - prev_frame_time
+        success, frame = webcam.read()
+        if not success:
+            break
 
-          # Bitwise-AND mask and original image
-          edges = detect_edges(mask, show=False)
-          cropped = crop_roi(edges, show=False)
-          lines = detect_lines(cropped)
+        if time_elapsed > 1./frame_rate:
+            prev_frame_time = time.time()
 
-          # Group lines into left and right lane markings
-          lane_lines = group_lines(frame, lines)
+            # Existing processing code...
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            mask = mask_img(hsv)
+            edges = detect_edges(mask)
+            cropped = crop_roi(edges)
+            lines = detect_lines(cropped)
+            lane_lines = group_lines(frame, lines)
 
-          # Draw left and right lane lines in red
-          if lane_lines:
-              for line in lane_lines:
-                  cv2.line(frame, (line[0][0], line[0][1]), (line[0][2], line[0][3]), (0, 0, 255), 2)
+            if lane_lines:
+                for line in lane_lines:
+                    cv2.line(frame, (line[0][0], line[0][1]), (line[0][2], line[0][3]), (0, 0, 255), 2)
 
-          # Draw center line in green if both lane lines are detected
-          if len(lane_lines) == 2:
-              mid_x1 = (lane_lines[0][0][0] + lane_lines[1][0][0]) // 2
-              mid_y1 = (lane_lines[0][0][1] + lane_lines[1][0][1]) // 2
-              mid_x2 = (lane_lines[0][0][2] + lane_lines[1][0][2]) // 2
-              mid_y2 = (lane_lines[0][0][3] + lane_lines[1][0][3]) // 2
-              cv2.line(frame, (mid_x1, mid_y1), (mid_x2, mid_y2), (0, 255, 0), 2)
+            if len(lane_lines) == 2:
+                mid_x1 = (lane_lines[0][0][0] + lane_lines[1][0][0]) // 2
+                mid_y1 = (lane_lines[0][0][1] + lane_lines[1][0][1]) // 2
+                mid_x2 = (lane_lines[0][0][2] + lane_lines[1][0][2]) // 2
+                mid_y2 = (lane_lines[0][0][3] + lane_lines[1][0][3]) // 2
+                cv2.line(frame, (mid_x1, mid_y1), (mid_x2, mid_y2), (0, 255, 0), 2)
 
-          ret, buffer = cv2.imencode('.jpg', frame)
-          frame = buffer.tobytes()
-          yield (b'--frame\r\n'
-                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            # Apply JPEG compression
+            ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85]) 
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 #navigates to homepage
 @app.route('/')
@@ -334,10 +269,10 @@ def start():
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Threshold the HSV image to get only blue colors
-    mask = mask_img(hsv, show=False)
+    mask = mask_img(hsv)
     # Bitwise-AND mask and original image
-    edges = detect_edges(mask, show=False)
-    cropped = crop_roi(edges, show=False)
+    edges = detect_edges(mask)
+    cropped = crop_roi(edges)
     lines = detect_lines(cropped)
     lines_grouped = group_lines(frame, lines)
     if(len(lines_grouped) == 1):
