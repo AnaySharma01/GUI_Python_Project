@@ -1,3 +1,8 @@
+#imports packages
+import time
+import cv2
+import numpy as np
+
 #Masking
 def mask_img(img):  # H  S  V
     lower_thr = np.array([0, 0, 0])
