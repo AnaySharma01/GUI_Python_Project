@@ -46,7 +46,7 @@ def generate_processed_video():
         if not success:
             break
         else:
-            # Existing processing code...
+            # Existing processing code
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             mask = mask_img(hsv)
             edges = detect_edges(mask)
@@ -70,6 +70,18 @@ def generate_processed_video():
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+#Creates route for raw video
+@app.route('/video_feed_raw', methods = ['GET', 'POST'])
+def video_feed_raw():
+    return Response(generate_raw_video(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+#Creates route for image processed video
+@app.route('/video_feed_processed',methods = ['GET', 'POST'])
+def video_feed_processed():
+    return Response(generate_processed_video(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 #Route for starting the video feed
 @app.route('/start', methods = ['GET', 'POST'])
@@ -128,7 +140,6 @@ def start():
   #starts robot and let the robot to move following a lane with webcam
   return jsonify("start")
 
-
 #Stops the robot
 @app.route('/stop', methods = ['GET', 'POST'])
 def stop():
@@ -138,13 +149,5 @@ def stop():
   webcam.release()
   return jsonify("stop")
 
-@app.route('/video_feed_raw', methods = ['GET', 'POST'])
-def video_feed_raw():
-    return Response(generate_raw_video(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/video_feed_processed',methods = ['GET', 'POST'])
-def video_feed_processed():
-    return Response(generate_processed_video(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
