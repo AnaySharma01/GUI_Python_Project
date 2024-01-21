@@ -1,16 +1,50 @@
+
 #imports packages
 from flask import *
 import sqlite3
 import bcrypt
 import time
-from adafruit_motorkit import MotorKit
 from flask_cors import CORS
 import cv2
 import numpy as np
 from flask import Response
+from threading import Thread
 
-#creates new motor kit
-kit = MotorKit(0x40)
+# Attempt to import and initialize MotorKit only on supported platforms
+try:
+    from adafruit_motorkit import MotorKit
+    kit = MotorKit(0x40)
+except (NotImplementedError, ImportError):
+    print("Running on an unsupported platform. Motor functionality will be mocked.")
+
+    # Define a mock MotorKit for development purposes
+    class MockMotorKit:
+        def __init__(self, address=0x40):
+            print(f"Initialized MockMotorKit at address {hex(address)}")
+
+        @property
+        def motor1(self):
+            return self.MockMotor()
+
+        @property
+        def motor2(self):
+            return self.MockMotor()
+
+        class MockMotor:
+            def __init__(self):
+                self._throttle = 0
+
+            @property
+            def throttle(self):
+                return self._throttle
+
+            @throttle.setter
+            def throttle(self, value):
+                self._throttle = value
+                print(f"Mock motor throttle set to {value}")
+
+    # Use the mock class instead of the real MotorKit
+    kit = MockMotorKit()
 
  #creates flask app
 app = Flask(__name__)
@@ -29,6 +63,140 @@ def get_db_connection():
     return conn
 
 camera = cv2.VideoCapture(0)
+
+def getCanny(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    canny = cv2.Canny(blur, 50, 150)
+    return canny
+
+def getSegment(frame):
+    height, width = frame.shape[:2]
+    # Define the vertices of the trapezoid
+    # Adjust these points based on your camera setup
+    lower_left = [width*0.01, height]
+    lower_right = [width*0.99, height]
+    upper_left = [width*0.01, height*0.5]
+    upper_right = [width*0.99, height*0.5]
+    polygons = np.array([[lower_left, upper_left, upper_right, lower_right]], dtype=np.int32)
+
+    mask = np.zeros_like(frame)
+    cv2.fillPoly(mask, polygons, 255)
+    segment = cv2.bitwise_and(frame, mask)
+    return segment, mask 
+
+def generateLines(frame, lines):
+    left = []
+    right = []
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line.reshape(4)
+            parameters = np.polyfit((x1, x2), (y1, y2), 1)
+            slope = parameters[0]
+            y_intercept = parameters[1]
+            if slope < 0:
+                left.append((slope, y_intercept))
+            else:
+                right.append((slope, y_intercept))
+
+    # Add handling if all slopes are zero or near zero
+    if not left and not right:
+        return None
+
+    if left:
+        left_avg = np.average(left, axis=0)
+        left_line = generateCoordinates(frame, left_avg)
+    else:
+        left_line = None  # or set a default value
+
+    if right:
+        right_avg = np.average(right, axis=0)
+        right_line = generateCoordinates(frame, right_avg)
+    else:
+        right_line = None  # or set a default value
+
+    return np.array([left_line, right_line]) if left_line is not None and right_line is not None else None
+
+def generateCoordinates(frame, parameters):
+    slope, intercept = parameters
+    y1 = frame.shape[0]  # Bottom of the frame
+    y2 = int(y1 * 0.6)   # Extend the line higher up in the frame
+
+    # Check for zero or near-zero slope to avoid division by zero
+    if np.isclose(slope, 0):
+        x1 = x2 = int(intercept)
+    else:
+        x1 = int((y1 - intercept) / slope)
+        x2 = int((y2 - intercept) / slope)
+
+    return np.array([x1, y1, x2, y2])
+
+def calculate_centerline(left_line, right_line):
+    """
+    Calculate the centerline based on the left and right lane lines.
+    Each line is represented by two points (x1, y1) and (x2, y2).
+    """
+    if left_line is None or right_line is None:
+        return None
+
+    # Calculate midpoints of the left and right lines
+    left_midpoint = [(left_line[0] + left_line[2]) / 2, (left_line[1] + left_line[3]) / 2]
+    right_midpoint = [(right_line[0] + right_line[2]) / 2, (right_line[1] + right_line[3]) / 2]
+
+    # Calculate the midpoint of the midpoints to find the centerline
+    center_x = (left_midpoint[0] + right_midpoint[0]) / 2
+    center_y = (left_midpoint[1] + right_midpoint[1]) / 2
+
+    return (center_x, center_y)
+
+def adjust_robot_direction(center_line):
+    """
+    Adjust the robot's direction based on the centerline position.
+    """
+    if center_line is None:
+        print("Centerline not detected, stopping the robot.")
+        kit.motor1.throttle = 0
+        kit.motor2.throttle = 0
+        return
+    frame_center_x = camera.get(cv2.CAP_PROP_FRAME_WIDTH) / 2  # Assuming 'camera' is your VideoCapture object
+    # Determine the direction to move based on the centerline's x position relative to the frame's center
+    if abs(center_line[0] - frame_center_x) < 20:  # Centerline is close to center, move forward
+        print("Moving forward")
+        kit.motor1.throttle = 0.732
+        kit.motor2.throttle = 0.7
+    elif center_line[0] < frame_center_x:  # Centerline is to the left, turn left
+        print("Turning left")
+        kit.motor1.throttle = 0.72
+        kit.motor2.throttle = -0.75
+    else:  # Centerline is to the right, turn right
+        print("Turning right")
+        kit.motor1.throttle = -0.72
+        kit.motor2.throttle = 0.72
+
+    # Adjust the duration of the turn/movement if necessary
+    time.sleep(0.3)  # Example sleep duration to prevent continuous movement
+
+def lane_following_task():
+    global is_running, kit
+    is_running = True
+    while is_running:
+        success, frame = camera.read()
+        if not success:
+            print("Failed to grab frame")
+            break
+        canny = getCanny(frame)
+        segment, mask = getSegment(canny)
+        new_threshold = 50  # Adjust this value as needed
+        hough = cv2.HoughLinesP(segment, 2, np.pi / 180, new_threshold, np.array([]), minLineLength=100, maxLineGap=50)
+        lines = generateLines(frame, hough)        
+        if lines is not None:
+            # Assuming generateLines returns [[x1, y1, x2, y2], [x1, y1, x2, y2]] for left and right lines
+            left_line, right_line = lines
+            # Here you would calculate the centerline and make a decision on how to adjust the robot's direction.
+            # For simplicity, let's assume we just call a function adjust_robot_direction(center_line)
+            center_line = calculate_centerline(left_line, right_line)
+            adjust_robot_direction(center_line)
+        time.sleep(0.1)  # Adjust based on your needs
 
 def generate_frames():
     while True:
@@ -99,12 +267,15 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-#Routes for controlling the robot
-@app.route('/start', methods = ['GET', 'POST'])
+lane_following_thread = None
+#Start the robor to follow the centerline of a lane based on lane detection    
+@app.route('/start', methods=['GET', 'POST'])
 def start():
-  global is_running, kit, webcam
-  #starts robot and let the robot to move following a lane with webcam
-  return jsonify("start")
+    global lane_following_thread
+    if lane_following_thread is None or not lane_following_thread.is_alive():
+        lane_following_thread = Thread(target=lane_following_task)
+        lane_following_thread.start()
+    return jsonify("start")
 
  #Move the robor right    
 @app.route('/right', methods = ['GET', 'POST'])
@@ -147,16 +318,15 @@ def left():
   return jsonify("left")
 
 #Stop the robot
-@app.route('/stop', methods = ['GET', 'POST'])
+@app.route('/stop', methods=['GET', 'POST'])
 def stop():
-  global is_running,webcam
-  is_running = False
-  #stops both motors
-  kit.motor1.throttle = 0
-  kit.motor2.throttle = 0
-  # Release the webcam 
-  webcam.release()
-  return jsonify("stop")
+    global is_running, lane_following_thread
+    is_running = False
+    if lane_following_thread is not None:
+        lane_following_thread.join()
+    kit.motor1.throttle = 0
+    kit.motor2.throttle = 0
+    return jsonify("stop")
 
 @app.route('/video_feed')
 def video_feed():
@@ -164,4 +334,5 @@ def video_feed():
 
 #Allows app to run
 if __name__ == '__main__':
-    app.run(host='192.168.1.20', port=4444)
+    app.run(host='192.168.1.28', port=4444) #Try this one first; if not working,try the next line
+    #app.run(debug=True, port=4444)
