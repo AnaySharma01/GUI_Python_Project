@@ -1,4 +1,3 @@
-
 #imports packages
 from flask import *
 import sqlite3
@@ -272,7 +271,8 @@ lane_following_thread = None
 @app.route('/start', methods=['GET', 'POST'])
 def start():
     global lane_following_thread
-    if lane_following_thread is None or not lane_following_thread.is_alive():
+#    if lane_following_thread is None or not lane_following_thread.is_alive():    
+    if lane_following_thread is None:
         lane_following_thread = Thread(target=lane_following_task)
         lane_following_thread.start()
     return jsonify("start")
