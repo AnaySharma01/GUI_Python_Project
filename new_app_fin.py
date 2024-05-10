@@ -293,7 +293,7 @@ def right():
 @app.route('/forward', methods = ['GET', 'POST'])
 def forward():
   #moves robot forward
-  kit.motor1.throttle = 0.78
+  kit.motor1.throttle = 0.82
   kit.motor2.throttle = 0.732
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
@@ -304,7 +304,7 @@ def forward():
 def backward():
   #moves robot backwards
   kit.motor1.throttle = -0.7
-  kit.motor2.throttle = -0.73
+  kit.motor2.throttle = -0.8
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
   return jsonify("backward")
