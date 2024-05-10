@@ -294,7 +294,7 @@ def right():
 def forward():
   #moves robot forward
   kit.motor1.throttle = 0.732
-  kit.motor2.throttle = 0.82
+  kit.motor2.throttle = 0.782
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
   return jsonify("forward")
@@ -303,7 +303,7 @@ def forward():
 #Move the robot backward
 def backward():
   #moves robot backwards
-  kit.motor1.throttle = -0.8
+  kit.motor1.throttle = -0.75
   kit.motor2.throttle = -0.7
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
