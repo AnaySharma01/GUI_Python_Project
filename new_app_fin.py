@@ -82,7 +82,7 @@ def getSegment(frame):
     mask = np.zeros_like(frame)
     cv2.fillPoly(mask, polygons, 255)
     segment = cv2.bitwise_and(frame, mask)
-    return segment, mask 
+    return segment, mask
 
 def generateLines(frame, lines):
     left = []
@@ -187,7 +187,7 @@ def lane_following_task():
         segment, mask = getSegment(canny)
         new_threshold = 50  # Adjust this value as needed
         hough = cv2.HoughLinesP(segment, 2, np.pi / 180, new_threshold, np.array([]), minLineLength=100, maxLineGap=50)
-        lines = generateLines(frame, hough)        
+        lines = generateLines(frame, hough)
         if lines is not None:
             # Assuming generateLines returns [[x1, y1, x2, y2], [x1, y1, x2, y2]] for left and right lines
             left_line, right_line = lines
@@ -210,7 +210,7 @@ def generate_frames():
 
 #navigates to homepage
 @app.route('/')
-def index():  
+def index():
     if 'username' in session:
         return render_template('index.html',firstname=session['username'])
     return render_template('login.html')
@@ -227,7 +227,7 @@ def login():
       #checks password
       if bcrypt.checkpw(request.form["password"].encode("utf-8"),str(user["password"]).encode("utf-8")):
           session['username'] = user["first_name"]
-          return redirect(url_for('index'))    
+          return redirect(url_for('index'))
       else:
          print("User/ Password Error")
 
@@ -249,7 +249,7 @@ def registration():
                           (str(request.form['username']),)).fetchone()
         #checks if user is in the database
         if user is None:
-             conn.execute('INSERT INTO user (username,password,first_name,last_name) VALUES (?, ?,?,?)',                          
+             conn.execute('INSERT INTO user (username,password,first_name,last_name) VALUES (?, ?,?,?)',
                          (username,password, firstname, lastname ))
         else:
             print(f"User {username} already exist!")
@@ -267,17 +267,17 @@ def logout():
     return redirect(url_for('login'))
 
 lane_following_thread = None
-#Start the robor to follow the centerline of a lane based on lane detection    
+#Start the robor to follow the centerline of a lane based on lane detection
 @app.route('/start', methods=['GET', 'POST'])
 def start():
     global lane_following_thread
-#    if lane_following_thread is None or not lane_following_thread.is_alive():    
+#    if lane_following_thread is None or not lane_following_thread.is_alive():
     if lane_following_thread is None:
         lane_following_thread = Thread(target=lane_following_task)
         lane_following_thread.start()
     return jsonify("start")
 
- #Move the robor right    
+ #Move the robor right
 @app.route('/right', methods = ['GET', 'POST'])
 def right():
   #moves robot right
@@ -285,13 +285,15 @@ def right():
   kit.motor2.throttle = 0.72
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
+  kit.motor1.throttle = 0
+  kit.motor2.throttle = 0
   return jsonify("right")
 
  #Move the robot forward
 @app.route('/forward', methods = ['GET', 'POST'])
 def forward():
   #moves robot forward
-  kit.motor1.throttle = 0.732
+  kit.motor1.throttle = 0.78
   kit.motor2.throttle = 0.732
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
@@ -302,7 +304,7 @@ def forward():
 def backward():
   #moves robot backwards
   kit.motor1.throttle = -0.7
-  kit.motor2.throttle = -0.7
+  kit.motor2.throttle = -0.73
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
   return jsonify("backward")
@@ -315,6 +317,8 @@ def left():
   kit.motor2.throttle = -0.72
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
+  kit.motor1.throttle = 0
+  kit.motor2.throttle = 0
   return jsonify("left")
 
 #Stop the robot
