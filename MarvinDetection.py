@@ -9,7 +9,7 @@ def alien_detected():
     template = cv2.imread('img.png', 0)
 
     # Perform match operations.
-    res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+    res = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
 
     # Specify a threshold
     threshold = 0.25
