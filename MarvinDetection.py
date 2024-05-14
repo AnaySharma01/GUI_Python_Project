@@ -26,3 +26,4 @@ def alien_detected():
         detected = True
         print("the mission is complete")
 
+alien_detected()
