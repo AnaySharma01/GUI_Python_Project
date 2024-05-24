@@ -279,40 +279,54 @@ def start():
 
  #Move the robor right    
 @app.route('/right', methods = ['GET', 'POST'])
-def right():  # Same as forward command, but command being sent is 'right'
-    url = 'http://192.168.1.14:5000/right'
-    data = {'command': 'right'}
-    response = requests.post(url, data=data)
+def right():
+  #moves robot right
+  kit.motor1.throttle = -0.72
+  kit.motor2.throttle = 0.72
+  #runs both motors for 0.3 seconds
+  time.sleep(0.3)
+  return jsonify("right")
 
  #Move the robot forward
 @app.route('/forward', methods = ['GET', 'POST'])
-def forward():  # Forward command
-    url = 'http://192.168.1.14:5000/forward'  # Sending command to ip route forward
-    data = {'command': 'forward'}  # Sending forward command
-    response = requests.post(url, data=data)  # Making the data being sent = forward
+def forward():
+  #moves robot forward
+  kit.motor1.throttle = 0.732
+  kit.motor2.throttle = 0.7
+  #runs both motors for 0.3 seconds
+  time.sleep(0.3)
+  return jsonify("forward")
 
 @app.route('/backward', methods = ['GET', 'POST'])
-
 #Move the robot backward
-def backward():  # Same as forward command, but command being sent is 'backward'
-    url = 'http://192.168.1.14:5000/backward'
-    data = {'command': 'backward'}
-    response = requests.post(url, data=data)
+def backward():
+  #moves robot backwards
+  kit.motor1.throttle = -0.81
+  kit.motor2.throttle = -0.7
+  #runs both motors for 0.3 seconds
+  time.sleep(0.3)
+  return jsonify("backward")
 
 @app.route('/left', methods = ['GET', 'POST'])
 #Move the robot left
-
-def left():  # Same as forward command, but command being sent is 'left'
-    url = 'http://192.168.1.14:5000/left'
-    data = {'command': 'left'}
-    response = requests.post(url, data=data)
+def left():
+  #moves robot left
+  kit.motor1.throttle = 0.72
+  kit.motor2.throttle = -0.75
+  #runs both motors for 0.3 seconds
+  time.sleep(0.3)
+  return jsonify("left")
 
 #Stop the robot
 @app.route('/stop', methods=['GET', 'POST'])
-def stop():  # Same as forward command, but command being sent is 'stop'
-    url = 'http://192.168.1.14:5000/stop'
-    data = {'command': 'stop'}
-    response = requests.post(url, data=data)
+def stop():
+    global is_running, lane_following_thread
+    is_running = False
+    if lane_following_thread is not None:
+        lane_following_thread.join()
+    kit.motor1.throttle = 0
+    kit.motor2.throttle = 0
+    return jsonify("stop")
 
 @app.route('/video_feed')
 def video_feed():
