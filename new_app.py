@@ -334,5 +334,5 @@ def video_feed():
 
 #Allows app to run
 if __name__ == '__main__':
-    app.run(host='192.168.1.30', port=4444) #Try this one first; if not working,try the next line
+    app.run(host='192.168.1.14', port=5000) #Try this one first; if not working,try the next line
     #app.run(debug=True, port=4444)
