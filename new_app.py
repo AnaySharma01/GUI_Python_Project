@@ -281,8 +281,8 @@ def start():
 @app.route('/right', methods = ['GET', 'POST'])
 def right():
   #moves robot right
-  kit.motor1.throttle = -0.72
-  kit.motor2.throttle = 0.72
+  kit.motor1.throttle = 0.72 * 1
+  kit.motor2.throttle = (0.72 + 0.069) * 1
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
   return jsonify("right")
@@ -291,8 +291,8 @@ def right():
 @app.route('/forward', methods = ['GET', 'POST'])
 def forward():
   #moves robot forward
-  kit.motor1.throttle = 0.732
-  kit.motor2.throttle = 0.7
+  kit.motor1.throttle = 0.775
+  kit.motor2.throttle = (0.775 - 0.15) * -1
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
   return jsonify("forward")
@@ -301,8 +301,8 @@ def forward():
 #Move the robot backward
 def backward():
   #moves robot backwards
-  kit.motor1.throttle = -0.81
-  kit.motor2.throttle = -0.7
+  kit.motor1.throttle = 0.775 * -1
+  kit.motor2.throttle = 0.775 - 0.1
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
   return jsonify("backward")
@@ -311,8 +311,8 @@ def backward():
 #Move the robot left
 def left():
   #moves robot left
-  kit.motor1.throttle = 0.72
-  kit.motor2.throttle = -0.75
+  kit.motor1.throttle = 0.72 * -1
+  kit.motor2.throttle = (0.72 + 0.069) * -1
   #runs both motors for 0.3 seconds
   time.sleep(0.3)
   return jsonify("left")
