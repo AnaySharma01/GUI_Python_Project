@@ -3,6 +3,38 @@ import time
 import cv2
 import numpy as np
 
+
+def thing(image):
+    def contours_2(image, og, extra_pix=0):
+        # find the contours on the image
+        contours, hierarchy = cv.findContours(image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        # contours = imutils.grab_contours((contours, hierarchy))
+        # sort the list of contours by the contour area
+        new_lst = list(contours)
+        new_lst.sort(key=cv.contourArea)
+        # if there are at least 2 contours that have been detected
+        if len(new_lst) > 1:
+            # get the 2 largest contours
+            c1 = new_lst[-1]
+            c2 = new_lst[-2]
+            # fit polylines to each contour
+            outline1 = cv.approxPolyDP(c1, 4, True)
+            cv.drawContours(image, [outline1], -1, (0, 255, 255), 15)
+            outline2 = cv.approxPolyDP(c2, 4, True)
+            cv.drawContours(image, [outline2], -1, (0, 255, 255), 15)
+            # draw a midline by going through the polyline and averaging each x and y coordinate
+            # append this averaged coordinate to a list and turn that list into a numpy array
+            midline = []
+
+            for pt1, pt2 in zip(outline1[:int(len(outline1) / 1.8)], outline2[:int(len(outline2) / 1.8)]):
+                mid_x = int((pt1[0][0] + pt2[0][0]) / 2) + extra_pix
+                mid_y = int((pt1[0][1] + pt2[0][1]) / 2)
+                midline.append([[mid_x, mid_y]])
+            midline = np.array(midline, dtype=np.int32)
+            # draw a polyline from the numpy array onto the frame
+            cv.polylines(og, [midline], False, (0, 255, 0), 15)
+            return midline
+            
 def detectLines():
     #Masking
     def mask_img(img):  # H  S  V
