@@ -267,14 +267,28 @@ def logout():
     return redirect(url_for('login'))
 
 lane_following_thread = None
+global robot_started 
+robot_started = False
 #Start the robor to follow the centerline of a lane based on lane detection    
 @app.route('/start', methods=['GET', 'POST'])
 def start():
+    robot_started = True
     global lane_following_thread
 #    if lane_following_thread is None or not lane_following_thread.is_alive():    
     if lane_following_thread is None:
         lane_following_thread = Thread(target=lane_following_task)
         lane_following_thread.start()
+        while robot_started == True:
+            if mid_x > (width // 2 +10):
+                kit.motor1.throttle = 0.72 * 1
+                kit.motor2.throttle = (0.72 + 0.069) * 1
+            elif mid_x < (width // 2 +10):
+                 kit.motor1.throttle = 0.72 * -1
+                 kit.motor2.throttle = (0.72 + 0.069) * -1
+            else: 
+                 kit.motor1.throttle = 0.775
+                 kit.motor2.throttle = (0.775 - 0.15) * -1
+            
     return jsonify("start")
 
  #Move the robor right    
