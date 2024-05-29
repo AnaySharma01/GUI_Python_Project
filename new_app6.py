@@ -8,7 +8,6 @@ import cv2
 import numpy as np
 from flask import Response
 from threading import Thread
-from detection import *
 
 # Attempt to import and initialize MotorKit only on supported platforms
 try:
@@ -68,8 +67,6 @@ def get_db_connection():
 
 
 camera = cv2.VideoCapture(0)
-thing(frame)
-
 def getCanny(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
