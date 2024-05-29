@@ -7,7 +7,7 @@ from datetime import datetime
 import logging
 import pytz
 import threading
-from new_app2 import *
+from new_app6 import *
 
 def thing(image):
     def contours_2(image, og, extra_pix=0):
