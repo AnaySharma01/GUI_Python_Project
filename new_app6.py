@@ -1,4 +1,4 @@
-#imports packages
+# imports packages
 from flask import *
 import sqlite3
 import bcrypt
@@ -8,13 +8,16 @@ import cv2
 import numpy as np
 from flask import Response
 from threading import Thread
+import detection
 
 # Attempt to import and initialize MotorKit only on supported platforms
 try:
     from adafruit_motorkit import MotorKit
+
     kit = MotorKit(0x40)
 except (NotImplementedError, ImportError):
     print("Running on an unsupported platform. Motor functionality will be mocked.")
+
 
     # Define a mock MotorKit for development purposes
     class MockMotorKit:
@@ -42,26 +45,30 @@ except (NotImplementedError, ImportError):
                 self._throttle = value
                 print(f"Mock motor throttle set to {value}")
 
+
     # Use the mock class instead of the real MotorKit
     kit = MockMotorKit()
 
- #creates flask app
+# creates flask app
 app = Flask(__name__)
 CORS(app)
 
-#used for session
+# used for session
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 # Global variable for control
 is_running = False
 
-#gets database connection
+
+# gets database connection
 def get_db_connection():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
 
+
 camera = cv2.VideoCapture(0)
+thing(frame)
 
 def getCanny(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
@@ -69,20 +76,22 @@ def getCanny(frame):
     canny = cv2.Canny(blur, 50, 150)
     return canny
 
+
 def getSegment(frame):
     height, width = frame.shape[:2]
     # Define the vertices of the trapezoid
     # Adjust these points based on your camera setup
-    lower_left = [width*0.01, height]
-    lower_right = [width*0.99, height]
-    upper_left = [width*0.01, height*0.5]
-    upper_right = [width*0.99, height*0.5]
+    lower_left = [width * 0.01, height]
+    lower_right = [width * 0.99, height]
+    upper_left = [width * 0.01, height * 0.5]
+    upper_right = [width * 0.99, height * 0.5]
     polygons = np.array([[lower_left, upper_left, upper_right, lower_right]], dtype=np.int32)
 
     mask = np.zeros_like(frame)
     cv2.fillPoly(mask, polygons, 255)
     segment = cv2.bitwise_and(frame, mask)
-    return segment, mask 
+    return segment, mask
+
 
 def generateLines(frame, lines):
     left = []
@@ -116,10 +125,11 @@ def generateLines(frame, lines):
 
     return np.array([left_line, right_line]) if left_line is not None and right_line is not None else None
 
+
 def generateCoordinates(frame, parameters):
     slope, intercept = parameters
     y1 = frame.shape[0]  # Bottom of the frame
-    y2 = int(y1 * 0.6)   # Extend the line higher up in the frame
+    y2 = int(y1 * 0.6)  # Extend the line higher up in the frame
 
     # Check for zero or near-zero slope to avoid division by zero
     if np.isclose(slope, 0):
@@ -129,6 +139,7 @@ def generateCoordinates(frame, parameters):
         x2 = int((y2 - intercept) / slope)
 
     return np.array([x1, y1, x2, y2])
+
 
 def calculate_centerline(left_line, right_line):
     """
@@ -147,6 +158,7 @@ def calculate_centerline(left_line, right_line):
     center_y = (left_midpoint[1] + right_midpoint[1]) / 2
 
     return (center_x, center_y)
+
 
 def adjust_robot_direction(center_line):
     """
@@ -175,6 +187,7 @@ def adjust_robot_direction(center_line):
     # Adjust the duration of the turn/movement if necessary
     time.sleep(0.3)  # Example sleep duration to prevent continuous movement
 
+
 def lane_following_task():
     global is_running, kit
     is_running = True
@@ -187,7 +200,7 @@ def lane_following_task():
         segment, mask = getSegment(canny)
         new_threshold = 50  # Adjust this value as needed
         hough = cv2.HoughLinesP(segment, 2, np.pi / 180, new_threshold, np.array([]), minLineLength=100, maxLineGap=50)
-        lines = generateLines(frame, hough)        
+        lines = generateLines(frame, hough)
         if lines is not None:
             # Assuming generateLines returns [[x1, y1, x2, y2], [x1, y1, x2, y2]] for left and right lines
             left_line, right_line = lines
@@ -196,6 +209,7 @@ def lane_following_task():
             center_line = calculate_centerline(left_line, right_line)
             adjust_robot_direction(center_line)
         time.sleep(0.1)  # Adjust based on your needs
+
 
 def generate_frames():
     while True:
@@ -208,130 +222,142 @@ def generate_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-#navigates to homepage
+
+# navigates to homepage
 @app.route('/')
-def index():  
+def index():
     if 'username' in session:
-        return render_template('index.html',firstname=session['username'])
+        return render_template('index.html', firstname=session['username'])
     return render_template('login.html')
 
-#navigates to login page
-@app.route('/login', methods = ['GET', 'POST'])
+
+# navigates to login page
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    #checks user credentials
+    # checks user credentials
     if request.method == 'POST':
-      conn = get_db_connection()
-      user = conn.execute('SELECT * from user where username = ? ',
-                          (str(request.form['username']),)).fetchone()
-      conn.close()
-      #checks password
-      if bcrypt.checkpw(request.form["password"].encode("utf-8"),str(user["password"]).encode("utf-8")):
-          session['username'] = user["first_name"]
-          return redirect(url_for('index'))    
-      else:
-         print("User/ Password Error")
-
-    return render_template('login.html')
-
-#creates registration page
-@app.route('/registration',methods=['GET', 'POST'])
-def registration():
-    #saves user information
-    if request.method == 'POST':
-        firstname=request.form["fname"]
-        lastname=request.form["lname"]
-        username=request.form["username"]
-        #encrypts password
-        salt = bcrypt.gensalt()
-        password = (bcrypt.hashpw(request.form["password"].encode("utf-8"),salt).decode(encoding= "utf-8"))
         conn = get_db_connection()
         user = conn.execute('SELECT * from user where username = ? ',
-                          (str(request.form['username']),)).fetchone()
-        #checks if user is in the database
+                            (str(request.form['username']),)).fetchone()
+        conn.close()
+        # checks password
+        if bcrypt.checkpw(request.form["password"].encode("utf-8"), str(user["password"]).encode("utf-8")):
+            session['username'] = user["first_name"]
+            return redirect(url_for('index'))
+        else:
+            print("User/ Password Error")
+
+    return render_template('login.html')
+
+
+# creates registration page
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    # saves user information
+    if request.method == 'POST':
+        firstname = request.form["fname"]
+        lastname = request.form["lname"]
+        username = request.form["username"]
+        # encrypts password
+        salt = bcrypt.gensalt()
+        password = (bcrypt.hashpw(request.form["password"].encode("utf-8"), salt).decode(encoding="utf-8"))
+        conn = get_db_connection()
+        user = conn.execute('SELECT * from user where username = ? ',
+                            (str(request.form['username']),)).fetchone()
+        # checks if user is in the database
         if user is None:
-             conn.execute('INSERT INTO user (username,password,first_name,last_name) VALUES (?, ?,?,?)',                          
-                         (username,password, firstname, lastname ))
+            conn.execute('INSERT INTO user (username,password,first_name,last_name) VALUES (?, ?,?,?)',
+                         (username, password, firstname, lastname))
         else:
             print(f"User {username} already exist!")
         conn.commit()
         conn.close()
         return redirect(url_for('login'))
     else:
-     return render_template('registration.html')
+        return render_template('registration.html')
 
-#logs out and redirects to login page
+
+# logs out and redirects to login page
 @app.route('/logout')
 def logout():
-    #removes the username from the session if it's there
+    # removes the username from the session if it's there
     session.pop('username', None)
     return redirect(url_for('login'))
 
+
 lane_following_thread = None
-global robot_started 
+global robot_started
 robot_started = False
-#Start the robor to follow the centerline of a lane based on lane detection    
+
+
+# Start the robor to follow the centerline of a lane based on lane detection
 @app.route('/start', methods=['GET', 'POST'])
 def start():
     robot_started = True
     global lane_following_thread
-#    if lane_following_thread is None or not lane_following_thread.is_alive():    
+    #    if lane_following_thread is None or not lane_following_thread.is_alive():
     if lane_following_thread is None:
         lane_following_thread = Thread(target=lane_following_task)
         lane_following_thread.start()
-        while robot_started == True:
-            if mid_x > (width // 2 +10):
-                kit.motor1.throttle = 0.72 * 1
-                kit.motor2.throttle = (0.72 + 0.069) * 1
-            elif mid_x < (width // 2 +10):
-                 kit.motor1.throttle = 0.72 * -1
-                 kit.motor2.throttle = (0.72 + 0.069) * -1
-            else: 
-                 kit.motor1.throttle = 0.775
-                 kit.motor2.throttle = (0.775 - 0.15) * -1
-            
+    while robot_started == True:
+        if mid_x > (width // 2 + 10):
+            kit.motor1.throttle = 0.72 * 1
+            kit.motor2.throttle = (0.72 + 0.069) * 1
+        elif mid_x < (width // 2 + 10):
+            kit.motor1.throttle = 0.72 * -1
+            kit.motor2.throttle = (0.72 + 0.069) * -1
+        else:
+            kit.motor1.throttle = 0.775
+            kit.motor2.throttle = (0.775 - 0.15) * -1
+
     return jsonify("start")
 
- #Move the robor right    
-@app.route('/right', methods = ['GET', 'POST'])
+
+# Move the robor right
+@app.route('/right', methods=['GET', 'POST'])
 def right():
-  #moves robot right
-  kit.motor1.throttle = 0.72 * 1
-  kit.motor2.throttle = (0.72 + 0.069) * 1
-  #runs both motors for 0.3 seconds
-  time.sleep(0.3)
-  return jsonify("right")
+    # moves robot right
+    kit.motor1.throttle = 0.72 * 1
+    kit.motor2.throttle = (0.72 + 0.069) * 1
+    # runs both motors for 0.3 seconds
+    time.sleep(0.3)
+    return jsonify("right")
 
- #Move the robot forward
-@app.route('/forward', methods = ['GET', 'POST'])
+
+# Move the robot forward
+@app.route('/forward', methods=['GET', 'POST'])
 def forward():
-  #moves robot forward
-  kit.motor1.throttle = 0.775
-  kit.motor2.throttle = (0.775 - 0.15) * -1
-  #runs both motors for 0.3 seconds
-  time.sleep(0.3)
-  return jsonify("forward")
+    # moves robot forward
+    kit.motor1.throttle = 0.775
+    kit.motor2.throttle = (0.775 - 0.15) * -1
+    # runs both motors for 0.3 seconds
+    time.sleep(0.3)
+    return jsonify("forward")
 
-@app.route('/backward', methods = ['GET', 'POST'])
-#Move the robot backward
+
+@app.route('/backward', methods=['GET', 'POST'])
+# Move the robot backward
 def backward():
-  #moves robot backwards
-  kit.motor1.throttle = 0.775 * -1
-  kit.motor2.throttle = 0.775 - 0.1
-  #runs both motors for 0.3 seconds
-  time.sleep(0.3)
-  return jsonify("backward")
+    # moves robot backwards
+    kit.motor1.throttle = 0.775 * -1
+    kit.motor2.throttle = 0.775 - 0.1
+    # runs both motors for 0.3 seconds
+    time.sleep(0.3)
+    return jsonify("backward")
 
-@app.route('/left', methods = ['GET', 'POST'])
-#Move the robot left
+
+@app.route('/left', methods=['GET', 'POST'])
+# Move the robot left
 def left():
-  #moves robot left
-  kit.motor1.throttle = 0.72 * -1
-  kit.motor2.throttle = (0.72 + 0.069) * -1
-  #runs both motors for 0.3 seconds
-  time.sleep(0.3)
-  return jsonify("left")
+    # moves robot left
+    kit.motor1.throttle = 0.72 * -1
+    kit.motor2.throttle = (0.72 + 0.069) * -1
+    # runs both motors for 0.3 seconds
+    time.sleep(0.3)
+    return jsonify("left")
 
-#Stop the robot
+
+# Stop the robot
 @app.route('/stop', methods=['GET', 'POST'])
 def stop():
     global is_running, lane_following_thread
@@ -342,11 +368,13 @@ def stop():
     kit.motor2.throttle = 0
     return jsonify("stop")
 
+
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-#Allows app to run
+
+# Allows app to run
 if __name__ == '__main__':
-    app.run(host='192.168.1.14', port=5000) #Try this one first; if not working,try the next line
-    #app.run(debug=True, port=5000)
+    app.run(host='192.168.1.14', port=5000)  # Try this one first; if not working,try the next line
+    # app.run(debug=True, port=5000)
