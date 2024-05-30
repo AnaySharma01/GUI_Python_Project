@@ -272,6 +272,8 @@ lane_following_thread = None
 def start():
     global lane_following_thread
 #    if lane_following_thread is None or not lane_following_thread.is_alive():    
+    kit.motor1.throttle = 0.775
+    kit.motor2.throttle = (0.775 - 0.15) * -1
     if lane_following_thread is None:
         lane_following_thread = Thread(target=lane_following_task)
         lane_following_thread.start()
